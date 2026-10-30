@@ -6,6 +6,8 @@ import { useAccountStore } from '../../store/useAccountStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/ipc';
 import { QuickAddTransactionModal } from '../../pages/transactions/components/QuickAddTransactionModal';
+import { DonationModal } from '../donation/DonationModal';
+import { useDonationStore } from '../../store/useDonationStore';
 
 interface MainLayoutProps {
   children?: React.ReactNode;
@@ -17,6 +19,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    // Checa gatilho de doação (na inicialização ou gatilho inteligente)
+    useDonationStore.getState().checkAutoPrompt();
+
     const unsubscribe = api.on('open-quick-add-modal', () => {
       setQuickAddOpen(true);
     });
@@ -57,6 +62,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         onTransactionAdded={handleTransactionAdded}
         defaultAccountId={accounts[0]?.id}
       />
+
+      <DonationModal />
     </div>
   );
 };

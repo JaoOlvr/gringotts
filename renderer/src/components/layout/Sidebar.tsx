@@ -10,11 +10,13 @@ import {
   Sparkles,
   Lock,
   LogOut,
-  Wallet
+  Wallet,
+  Heart
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { useAccountStore } from '../../store/useAccountStore';
+import { useDonationStore } from '../../store/useDonationStore';
 
 interface SidebarProps {
   selected?: string;
@@ -23,6 +25,7 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   const setQuickAddOpen = useTransactionStore((state) => state.setQuickAddOpen);
+  const openDonationModal = useDonationStore((state) => state.openDonationModal);
   const accounts = useAccountStore((state) => state.accounts);
   const selectedAccountId = useAccountStore((state) => state.selectedAccountId);
   const lockSession = useAccountStore((state) => state.lockSession);
@@ -85,6 +88,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
 
       {/* Rodapé: Conta Ativa e Botão de Bloquear / Trocar Conta */}
       <div className="p-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
+        {/* Botão Permanente de Apoio / Pix */}
+        <button
+          onClick={() => openDonationModal()}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-amber-700 dark:text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 transition-all group shadow-2xs"
+          title="Apoiar o projeto Gringotts com Pix"
+        >
+          <Heart className="w-3.5 h-3.5 fill-amber-500 text-amber-500 transition-transform group-hover:scale-125" />
+          <span className="font-semibold">Apoiar o Gringotts</span>
+          <span className="ml-auto text-[10px] bg-amber-500/20 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+            Pix
+          </span>
+        </button>
+
         {activeAccount && (
           <div className="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-750/60 border border-gray-100 dark:border-gray-700 flex items-center justify-between">
             <div className="flex items-center space-x-2.5 min-w-0">
