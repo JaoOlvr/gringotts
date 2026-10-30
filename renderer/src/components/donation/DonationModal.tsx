@@ -137,7 +137,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen: propIsOpen
             <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-750">
               <div className="min-w-0 mr-2">
                 <span className="block text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                  Chave Pix (E-mail)
+                  Chave Pix (Aleatória)
                 </span>
                 <span className="text-xs font-mono font-semibold text-gray-800 dark:text-gray-200 truncate block select-all">
                   {PIX_KEY_DEFAULT}

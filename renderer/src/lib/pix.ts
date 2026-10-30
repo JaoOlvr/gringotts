@@ -30,7 +30,7 @@ export interface PixPayloadOptions {
   txId?: string;
 }
 
-export const PIX_KEY_DEFAULT = 'joaoolvr@outlook.com';
+export const PIX_KEY_DEFAULT = '98f9686d-f217-4db7-b684-d7385a51133e';
 
 export function generatePixPayload({
   key = PIX_KEY_DEFAULT,
