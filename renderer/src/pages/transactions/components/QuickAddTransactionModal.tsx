@@ -25,6 +25,7 @@ interface QuickAddTransactionModalProps {
   onTransactionAdded?: () => void;
   defaultAccountId?: string;
   defaultDate?: string;
+  defaultAmount?: string;
 }
 
 export const QuickAddTransactionModal: React.FC<QuickAddTransactionModalProps> = ({ 
@@ -33,6 +34,7 @@ export const QuickAddTransactionModal: React.FC<QuickAddTransactionModalProps> =
   onTransactionAdded,
   defaultAccountId,
   defaultDate,
+  defaultAmount,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +52,7 @@ export const QuickAddTransactionModal: React.FC<QuickAddTransactionModalProps> =
   } = useForm<QuickAddFormValues>({
     resolver: zodResolver(quickAddSchema) as any,
     defaultValues: {
-      amount: '',
+      amount: defaultAmount || '',
       date: new Date().toISOString().split('T')[0],
       description: '',
       categoryId: '',
@@ -63,6 +65,9 @@ export const QuickAddTransactionModal: React.FC<QuickAddTransactionModalProps> =
 
   useEffect(() => {
     if (isOpen) {
+      if (defaultAmount) {
+        setValue('amount', defaultAmount);
+      }
       if (defaultDate) {
         setValue('date', defaultDate);
       }

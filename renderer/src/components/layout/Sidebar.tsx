@@ -11,12 +11,14 @@ import {
   Lock,
   LogOut,
   Wallet,
-  Heart
+  Heart,
+  Calculator
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { useAccountStore } from '../../store/useAccountStore';
 import { useDonationStore } from '../../store/useDonationStore';
+import { useCalculatorStore } from '../../store/useCalculatorStore';
 
 interface SidebarProps {
   selected?: string;
@@ -26,6 +28,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   const setQuickAddOpen = useTransactionStore((state) => state.setQuickAddOpen);
   const openDonationModal = useDonationStore((state) => state.openDonationModal);
+  const toggleCalculator = useCalculatorStore((state) => state.toggleCalculator);
   const accounts = useAccountStore((state) => state.accounts);
   const selectedAccountId = useAccountStore((state) => state.selectedAccountId);
   const lockSession = useAccountStore((state) => state.lockSession);
@@ -83,6 +86,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
               <span className="ml-3">{item.name}</span>
             </NavLink>
           ))}
+
+          {/* Botão Calculadora */}
+          <button
+            onClick={() => toggleCalculator()}
+            className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750 transition duration-150 text-left w-full group"
+            title="Calculadora Financeira (Atalho: Alt+C)"
+          >
+            <Calculator className="w-5 h-5 text-gray-500 group-hover:text-amber-500 transition-colors" />
+            <span className="ml-3">Calculadora</span>
+            <kbd className="ml-auto hidden sm:inline-block text-[10px] bg-gray-100 dark:bg-gray-700/80 px-1.5 py-0.5 rounded text-gray-500 dark:text-gray-400 font-mono">
+              Alt+C
+            </kbd>
+          </button>
         </nav>
       </div>
 

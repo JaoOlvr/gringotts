@@ -6,10 +6,11 @@ interface TransactionState {
   isLoading: boolean;
   error: string | null;
   quickAddOpen: boolean;
+  quickAddInitialAmount?: string;
   setTransactions: (transactions: Transaction[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  setQuickAddOpen: (open: boolean) => void;
+  setQuickAddOpen: (open: boolean, initialAmount?: string) => void;
 }
 
 export const useTransactionStore = create<TransactionState>((set) => ({
@@ -17,8 +18,9 @@ export const useTransactionStore = create<TransactionState>((set) => ({
   isLoading: false,
   error: null,
   quickAddOpen: false,
+  quickAddInitialAmount: undefined,
   setTransactions: (transactions) => set({ transactions }),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
-  setQuickAddOpen: (open) => set({ quickAddOpen: open }),
+  setQuickAddOpen: (open, initialAmount) => set({ quickAddOpen: open, quickAddInitialAmount: initialAmount }),
 }));

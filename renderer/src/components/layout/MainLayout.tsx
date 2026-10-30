@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/ipc';
 import { QuickAddTransactionModal } from '../../pages/transactions/components/QuickAddTransactionModal';
 import { DonationModal } from '../donation/DonationModal';
+import { CalculatorModal } from '../calculator/CalculatorModal';
 import { useDonationStore } from '../../store/useDonationStore';
 
 interface MainLayoutProps {
@@ -14,7 +15,7 @@ interface MainLayoutProps {
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const { quickAddOpen, setQuickAddOpen } = useTransactionStore();
+  const { quickAddOpen, setQuickAddOpen, quickAddInitialAmount } = useTransactionStore();
   const accounts = useAccountStore((state) => state.accounts);
   const queryClient = useQueryClient();
 
@@ -61,9 +62,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         onClose={() => setQuickAddOpen(false)}
         onTransactionAdded={handleTransactionAdded}
         defaultAccountId={accounts[0]?.id}
+        defaultAmount={quickAddInitialAmount}
       />
 
       <DonationModal />
+      <CalculatorModal />
     </div>
   );
 };
