@@ -100,9 +100,11 @@ export const AccountSelectScreen: React.FC = () => {
       {/* Top Header */}
       <div className="max-w-5xl w-full mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center shadow-lg shadow-amber-500/20">
-            <Sparkles className="w-6 h-6 text-amber-950" />
-          </div>
+          <img 
+            src="/favicon.svg" 
+            alt="Gringotts" 
+            className="w-10 h-10 rounded-2xl shadow-lg shadow-amber-500/20 object-contain" 
+          />
           <div>
             <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
               Gringotts

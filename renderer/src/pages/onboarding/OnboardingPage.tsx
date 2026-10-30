@@ -94,9 +94,11 @@ export const OnboardingPage: React.FC = () => {
           {/* Header */}
           <div className="flex items-center justify-between pb-6 mb-6 border-b border-gray-800/80">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center shadow-lg shadow-amber-500/20">
-                <Sparkles className="w-5 h-5 text-amber-950" />
-              </div>
+              <img 
+                src="/favicon.svg" 
+                alt="Gringotts" 
+                className="w-10 h-10 rounded-xl shadow-lg shadow-amber-500/20 object-contain" 
+              />
               <div>
                 <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
                   Gringotts <span className="text-xs px-2 py-0.5 rounded-md bg-gray-800 text-gray-400 font-normal">v1.0</span>

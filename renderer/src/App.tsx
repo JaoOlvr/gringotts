@@ -37,7 +37,7 @@ function App() {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center gap-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <img src="/favicon.svg" alt="Gringotts" className="w-12 h-12 rounded-2xl animate-pulse shadow-lg shadow-amber-500/20 object-contain" />
           <span className="text-sm font-medium text-gray-500">Iniciando Gringotts...</span>
         </div>
       </div>

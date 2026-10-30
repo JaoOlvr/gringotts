@@ -14,6 +14,7 @@ function createWindow() {
     minHeight: 650,
     backgroundColor: '#0f172a',
     title: 'Gringotts - Controle Financeiro',
+    icon: path.join(__dirname, '../../resources/icon.png'),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       contextIsolation: true,
