@@ -28,7 +28,7 @@
     "react",
     "personal-finance"
   ],
-  "author": "Gringotts Team",
+  "author": "JaoOlvr <joaoolvr@outlook.com>",
   "license": "MIT",
   "type": "commonjs",
   "build": {
@@ -51,7 +51,9 @@
         "deb"
       ],
       "category": "Office;Finance",
-      "icon": "resources/icon.png"
+      "icon": "resources/icon.png",
+      "maintainer": "joaoolvr@outlook.com",
+      "syncDesktopName": true
     },
     "win": {
       "target": [
@@ -83,16 +85,14 @@
           "target": "dmg",
           "arch": [
             "x64",
-            "arm64",
-            "universal"
+            "arm64"
           ]
         },
         {
           "target": "zip",
           "arch": [
             "x64",
-            "arm64",
-            "universal"
+            "arm64"
           ]
         }
       ],
