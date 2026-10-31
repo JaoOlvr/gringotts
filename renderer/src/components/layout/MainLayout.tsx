@@ -8,7 +8,9 @@ import { api } from '../../lib/ipc';
 import { QuickAddTransactionModal } from '../../pages/transactions/components/QuickAddTransactionModal';
 import { DonationModal } from '../donation/DonationModal';
 import { CalculatorModal } from '../calculator/CalculatorModal';
+import { UpdateModal } from '../updater/UpdateModal';
 import { useDonationStore } from '../../store/useDonationStore';
+import { useUpdaterStore } from '../../store/useUpdaterStore';
 
 interface MainLayoutProps {
   children?: React.ReactNode;
@@ -23,10 +25,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     // Checa gatilho de doação (na inicialização ou gatilho inteligente)
     useDonationStore.getState().checkAutoPrompt();
 
+    // Checa atualização em segundo plano após 3s
+    const updateTimer = setTimeout(() => {
+      useUpdaterStore.getState().checkForUpdates(false);
+    }, 3000);
+
     const unsubscribe = api.on('open-quick-add-modal', () => {
       setQuickAddOpen(true);
     });
     return () => {
+      clearTimeout(updateTimer);
       if (typeof unsubscribe === 'function') {
         unsubscribe();
       }
@@ -67,6 +75,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <DonationModal />
       <CalculatorModal />
+      <UpdateModal />
     </div>
   );
 };

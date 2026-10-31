@@ -2,6 +2,22 @@ import type { Account, Category, Transaction, Budget, Goal } from '../types';
 
 export type { Account, Category, Transaction, Budget, Goal };
 
+export interface UpdateCheckResult {
+  hasUpdate: boolean;
+  currentVersion: string;
+  latestVersion: string;
+  releaseName: string;
+  releaseNotes: string;
+  releaseUrl: string;
+  downloadUrl?: string;
+  assetName?: string;
+  assetSize?: number;
+  publishedAt?: string;
+  platform: 'linux' | 'win32' | 'darwin' | string;
+  arch?: string;
+  error?: string;
+}
+
 // Interface for Electron Window API
 declare global {
   interface Window {
@@ -246,6 +262,30 @@ export const api = {
     loadSeedData: async (): Promise<{ success: boolean }> => {
       if (isElectron) return window.api!.invoke('seed:load');
       return { success: true };
+    },
+  },
+
+  updater: {
+    check: async (): Promise<UpdateCheckResult> => {
+      if (isElectron) return window.api!.invoke('updater:check');
+      return {
+        hasUpdate: false,
+        currentVersion: '1.0.0',
+        latestVersion: '1.0.0',
+        releaseName: 'Gringotts Local Preview',
+        releaseNotes: '',
+        releaseUrl: 'https://github.com/JaoOlvr/gringotts/releases',
+        platform: 'linux',
+      };
+    },
+    openExternal: async (url: string): Promise<boolean> => {
+      if (isElectron) return window.api!.invoke('updater:openExternal', url);
+      window.open(url, '_blank');
+      return true;
+    },
+    getAppInfo: async (): Promise<{ version: string; platform: string; arch: string }> => {
+      if (isElectron) return window.api!.invoke('updater:getAppInfo');
+      return { version: '1.0.0', platform: 'linux', arch: 'x64' };
     },
   },
 

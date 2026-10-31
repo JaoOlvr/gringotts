@@ -12,13 +12,16 @@ import {
   LogOut,
   Wallet,
   Heart,
-  Calculator
+  Calculator,
+  ArrowUpCircle,
+  RefreshCw
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { useAccountStore } from '../../store/useAccountStore';
 import { useDonationStore } from '../../store/useDonationStore';
 import { useCalculatorStore } from '../../store/useCalculatorStore';
+import { useUpdaterStore } from '../../store/useUpdaterStore';
 import { GringottsLogo } from '../common/GringottsLogo';
 
 interface SidebarProps {
@@ -33,6 +36,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   const accounts = useAccountStore((state) => state.accounts);
   const selectedAccountId = useAccountStore((state) => state.selectedAccountId);
   const lockSession = useAccountStore((state) => state.lockSession);
+
+  // Updater
+  const hasUpdate = useUpdaterStore((s) => s.hasUpdate);
+  const updateInfo = useUpdaterStore((s) => s.updateInfo);
+  const isCheckingUpdate = useUpdaterStore((s) => s.isChecking);
+  const checkForUpdates = useUpdaterStore((s) => s.checkForUpdates);
+  const openUpdateModal = useUpdaterStore((s) => s.openModal);
 
   const activeAccount = accounts.find((a) => a.id === selectedAccountId) || accounts[0];
 
@@ -147,8 +157,33 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
           </div>
         )}
 
-        <div className="text-[11px] text-gray-400 dark:text-gray-500 text-center">
-          Gringotts • Offline First
+        {/* Botão de Atualização Disponível (se houver) */}
+        {hasUpdate && (
+          <button
+            onClick={() => openUpdateModal()}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-gray-950 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 hover:brightness-110 active:scale-[0.98] transition-all shadow-md shadow-amber-500/20"
+            title="Nova versão disponível - Clique para atualizar"
+          >
+            <ArrowUpCircle className="w-4 h-4 text-gray-950 stroke-[2.5] shrink-0" />
+            <span className="truncate">Nova versão v{updateInfo?.latestVersion}</span>
+            <span className="ml-auto text-[10px] bg-black/20 text-gray-950 font-black px-1.5 py-0.5 rounded uppercase">
+              Ver
+            </span>
+          </button>
+        )}
+
+        {/* Rodapé com Versão e Verificador */}
+        <div className="flex items-center justify-between pt-1 px-1 text-[11px] text-gray-400 dark:text-gray-500">
+          <span>v{updateInfo?.currentVersion || '1.0.0'} • Offline</span>
+          <button
+            onClick={() => checkForUpdates(true)}
+            disabled={isCheckingUpdate}
+            className="flex items-center gap-1 hover:text-amber-500 transition-colors disabled:opacity-50 cursor-pointer"
+            title="Verificar atualizações no GitHub"
+          >
+            <RefreshCw className={cn("w-3 h-3", isCheckingUpdate && "animate-spin text-amber-500")} />
+            <span>{isCheckingUpdate ? 'Buscando...' : 'Atualizações'}</span>
+          </button>
         </div>
       </div>
     </aside>

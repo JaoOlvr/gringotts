@@ -5,6 +5,7 @@ import { registerBudgetsHandlers } from './handlers/budgetsHandlers';
 import { registerGoalsHandlers } from './handlers/goalsHandlers';
 import { registerBackupHandlers } from './handlers/backupHandlers';
 import { registerSeedHandlers } from './handlers/seedHandlers';
+import { registerUpdaterHandlers } from './handlers/updaterHandlers';
 
 export function registerAllHandlers() {
   registerAccountsHandlers();
@@ -14,4 +15,5 @@ export function registerAllHandlers() {
   registerGoalsHandlers();
   registerBackupHandlers();
   registerSeedHandlers();
+  registerUpdaterHandlers();
 }
