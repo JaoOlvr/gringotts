@@ -19,6 +19,7 @@ import { useTransactionStore } from '../../store/useTransactionStore';
 import { useAccountStore } from '../../store/useAccountStore';
 import { useDonationStore } from '../../store/useDonationStore';
 import { useCalculatorStore } from '../../store/useCalculatorStore';
+import { GringottsLogo } from '../common/GringottsLogo';
 
 interface SidebarProps {
   selected?: string;
@@ -47,11 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col justify-between shrink-0">
       <div className="p-4">
         <div className="flex items-center space-x-3 mb-6">
-          <img 
-            src="/favicon.svg" 
-            alt="Gringotts" 
-            className="w-9 h-9 rounded-xl shadow-md shadow-amber-500/20 object-contain" 
-          />
+          <GringottsLogo className="w-9 h-9 rounded-xl shadow-md shadow-amber-500/20 shrink-0" />
           <div>
             <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Gringotts</span>
             <span className="block text-[10px] font-medium uppercase tracking-wider text-amber-600 dark:text-amber-400">Finanças Pessoais</span>

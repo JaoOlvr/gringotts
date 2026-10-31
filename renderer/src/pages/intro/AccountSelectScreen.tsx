@@ -6,6 +6,7 @@ import { AccountUnlockModal } from '../../components/security/AccountUnlockModal
 import { AccountSecurityModal } from '../../components/security/AccountSecurityModal';
 import { DeleteAccountModal } from '../../components/security/DeleteAccountModal';
 import { AccountFormModal } from '../accounts/components/AccountFormModal';
+import { GringottsLogo } from '../../components/common/GringottsLogo';
 import { api } from '../../lib/ipc';
 import { 
   Sparkles, 
@@ -100,11 +101,7 @@ export const AccountSelectScreen: React.FC = () => {
       {/* Top Header */}
       <div className="max-w-5xl w-full mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <img 
-            src="/favicon.svg" 
-            alt="Gringotts" 
-            className="w-10 h-10 rounded-2xl shadow-lg shadow-amber-500/20 object-contain" 
-          />
+          <GringottsLogo className="w-10 h-10 rounded-2xl shadow-lg shadow-amber-500/20 shrink-0" />
           <div>
             <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
               Gringotts

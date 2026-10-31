@@ -11,6 +11,7 @@ import { AccountSelectScreen } from './pages/intro/AccountSelectScreen';
 import { useAccountStore } from './store/useAccountStore';
 import { api } from './lib/ipc';
 import { useGlobalKeyboardShortcuts } from './lib/keyboard';
+import { GringottsLogo } from './components/common/GringottsLogo';
 
 function App() {
   useGlobalKeyboardShortcuts();
@@ -37,7 +38,7 @@ function App() {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center gap-3">
-          <img src="/favicon.svg" alt="Gringotts" className="w-12 h-12 rounded-2xl animate-pulse shadow-lg shadow-amber-500/20 object-contain" />
+          <GringottsLogo className="w-12 h-12 rounded-2xl animate-pulse shadow-lg shadow-amber-500/20" />
           <span className="text-sm font-medium text-gray-500">Iniciando Gringotts...</span>
         </div>
       </div>

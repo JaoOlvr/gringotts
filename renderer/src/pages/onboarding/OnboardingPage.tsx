@@ -6,6 +6,7 @@ import { StepThree } from './steps/StepThree';
 import { useAccountStore } from '../../store/useAccountStore';
 import { api } from '../../lib/ipc';
 import { Sparkles, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { GringottsLogo } from '../../components/common/GringottsLogo';
 
 export const OnboardingPage: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -94,11 +95,7 @@ export const OnboardingPage: React.FC = () => {
           {/* Header */}
           <div className="flex items-center justify-between pb-6 mb-6 border-b border-gray-800/80">
             <div className="flex items-center gap-3">
-              <img 
-                src="/favicon.svg" 
-                alt="Gringotts" 
-                className="w-10 h-10 rounded-xl shadow-lg shadow-amber-500/20 object-contain" 
-              />
+              <GringottsLogo className="w-10 h-10 rounded-xl shadow-lg shadow-amber-500/20 shrink-0" />
               <div>
                 <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
                   Gringotts <span className="text-xs px-2 py-0.5 rounded-md bg-gray-800 text-gray-400 font-normal">v1.0</span>
