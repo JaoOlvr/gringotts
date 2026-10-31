@@ -23,6 +23,7 @@ import { useDonationStore } from '../../store/useDonationStore';
 import { useCalculatorStore } from '../../store/useCalculatorStore';
 import { useUpdaterStore } from '../../store/useUpdaterStore';
 import { GringottsLogo } from '../common/GringottsLogo';
+import { ThemeSelector } from '../common/ThemeSelector';
 
 interface SidebarProps {
   selected?: string;
@@ -125,6 +126,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             Pix
           </span>
         </button>
+
+        {/* Seletor de Tema (Acessibilidade Claro/Escuro/Sistema) */}
+        <ThemeSelector />
 
         {activeAccount && (
           <div className="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-750/60 border border-gray-100 dark:border-gray-700 flex items-center justify-between">

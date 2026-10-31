@@ -12,6 +12,7 @@ import { useAccountStore } from './store/useAccountStore';
 import { api } from './lib/ipc';
 import { useGlobalKeyboardShortcuts } from './lib/keyboard';
 import { GringottsLogo } from './components/common/GringottsLogo';
+import { useThemeStore } from './store/useThemeStore';
 
 function App() {
   useGlobalKeyboardShortcuts();
@@ -19,6 +20,9 @@ function App() {
   const [initialLoading, setInitialLoading] = React.useState(true);
 
   useEffect(() => {
+    // Inicializa listeners do tema do sistema operacional
+    const cleanupTheme = useThemeStore.getState().initTheme();
+
     api.accounts.getAll()
       .then((accs) => {
         setAccounts(accs);
@@ -29,6 +33,10 @@ function App() {
       .finally(() => {
         setInitialLoading(false);
       });
+
+    return () => {
+      cleanupTheme();
+    };
   }, [setAccounts]);
 
   const needsOnboarding = accounts.length === 0;

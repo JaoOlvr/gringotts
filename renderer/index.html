@@ -7,8 +7,23 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="alternate icon" type="image/png" href="./icon.png" />
     <title>Gringotts - Controle Financeiro</title>
+    <script>
+      (function() {
+        try {
+          var mode = localStorage.getItem('gringotts_theme_mode') || 'system';
+          var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="bg-[#07090e] text-gray-100 antialiased select-none">
+  <body class="bg-gray-50 text-gray-900 dark:bg-[#0b0f19] dark:text-gray-100 antialiased select-none">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

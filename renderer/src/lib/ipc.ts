@@ -289,6 +289,20 @@ export const api = {
     },
   },
 
+  theme: {
+    get: async (): Promise<{ themeSource: 'system' | 'light' | 'dark'; shouldUseDarkColors: boolean }> => {
+      if (isElectron) return window.api!.invoke('theme:get');
+      const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return { themeSource: 'system', shouldUseDarkColors: prefersDark };
+    },
+    set: async (mode: 'system' | 'light' | 'dark'): Promise<{ themeSource: 'system' | 'light' | 'dark'; shouldUseDarkColors: boolean }> => {
+      if (isElectron) return window.api!.invoke('theme:set', mode);
+      const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const shouldUseDark = mode === 'dark' || (mode === 'system' && prefersDark);
+      return { themeSource: mode, shouldUseDarkColors: shouldUseDark };
+    },
+  },
+
   on: (channel: string, func: (...args: unknown[]) => void) => {
     if (isElectron) {
       return window.api!.on(channel, func);
