@@ -270,8 +270,8 @@ export const api = {
       if (isElectron) return window.api!.invoke('updater:check');
       return {
         hasUpdate: false,
-        currentVersion: '1.0.0',
-        latestVersion: '1.0.0',
+        currentVersion: '1.1.0',
+        latestVersion: '1.1.0',
         releaseName: 'Gringotts Local Preview',
         releaseNotes: '',
         releaseUrl: 'https://github.com/JaoOlvr/gringotts/releases',
@@ -285,7 +285,7 @@ export const api = {
     },
     getAppInfo: async (): Promise<{ version: string; platform: string; arch: string }> => {
       if (isElectron) return window.api!.invoke('updater:getAppInfo');
-      return { version: '1.0.0', platform: 'linux', arch: 'x64' };
+      return { version: '1.1.0', platform: 'linux', arch: 'x64' };
     },
   },
 

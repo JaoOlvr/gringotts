@@ -98,7 +98,7 @@ export const OnboardingPage: React.FC = () => {
               <GringottsLogo className="w-10 h-10 rounded-xl shadow-lg shadow-amber-500/20 shrink-0" />
               <div>
                 <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                  Gringotts <span className="text-xs px-2 py-0.5 rounded-md bg-gray-800 text-gray-400 font-normal">v1.0</span>
+                  Gringotts <span className="text-xs px-2 py-0.5 rounded-md bg-gray-800 text-gray-400 font-normal">v1.1</span>
                 </h1>
                 <span className="text-xs text-gray-400">Controle financeiro pessoal offline</span>
               </div>
