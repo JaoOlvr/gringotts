@@ -59,8 +59,8 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
       });
       return {
         hasUpdate: false,
-        currentVersion: '1.1.0',
-        latestVersion: '1.1.0',
+        currentVersion: '1.2.0',
+        latestVersion: '1.2.0',
         releaseName: '',
         releaseNotes: '',
         releaseUrl: 'https://github.com/JaoOlvr/gringotts/releases',

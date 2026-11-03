@@ -102,7 +102,7 @@ export class UpdaterService {
    * Consulta a API do GitHub Releases para verificar se há versões mais recentes
    */
   async checkForUpdates(): Promise<UpdateCheckResult> {
-    const currentVersion = app ? app.getVersion() : '1.1.0';
+    const currentVersion = app ? app.getVersion() : '1.2.0';
     const platform = (process.platform === 'win32' || process.platform === 'darwin' || process.platform === 'linux')
       ? process.platform
       : 'linux';
