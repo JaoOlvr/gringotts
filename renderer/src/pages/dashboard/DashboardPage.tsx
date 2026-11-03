@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar as CalendarIcon, Landmark, Layers } from 'lucide-react';
 import { api } from '../../lib/ipc';
 import { formatCurrency } from '../../lib/utils';
+import { useAccountStore } from '../../store/useAccountStore';
 import { CardGrid } from './components/CardGrid';
 import { ExpensesChart } from './components/ExpensesChart';
 import { IncomeExpensesChart } from './components/IncomeExpensesChart';
@@ -14,7 +15,32 @@ import { GoalsProgress } from './components/GoalsProgress';
 import type { Account, Category, Transaction, Budget, Goal } from '../../types';
 
 export const DashboardPage: React.FC = () => {
-  const [selectedAccountId, setSelectedAccountId] = useState<string>('all');
+  const location = useLocation();
+  const storeSelectedAccountId = useAccountStore((state) => state.selectedAccountId);
+  const selectAccountInStore = useAccountStore((state) => state.selectAccount);
+
+  // Inicializa com a conta acessada (pelo state da rota, store de conta ativa ou fallback 'all')
+  const initialAccountId = useMemo(() => {
+    const navStateId = (location.state as any)?.selectedAccountId;
+    if (navStateId) return navStateId;
+    const searchParams = new URLSearchParams(location.search);
+    const queryId = searchParams.get('account');
+    if (queryId) return queryId;
+    if (storeSelectedAccountId) return storeSelectedAccountId;
+    return 'all';
+  }, [location.state, location.search, storeSelectedAccountId]);
+
+  const [selectedAccountId, setSelectedAccountId] = useState<string>(initialAccountId);
+
+  // Sincroniza se a conta acessada mudar via navegação ou store
+  useEffect(() => {
+    const navStateId = (location.state as any)?.selectedAccountId;
+    if (navStateId) {
+      setSelectedAccountId(navStateId);
+    } else if (storeSelectedAccountId) {
+      setSelectedAccountId(storeSelectedAccountId);
+    }
+  }, [location.state, storeSelectedAccountId]);
 
   const { currentMonth, currentYear } = useMemo(() => {
     const now = new Date();
@@ -176,7 +202,13 @@ export const DashboardPage: React.FC = () => {
             </span>
             <select
               value={selectedAccountId}
-              onChange={(e) => setSelectedAccountId(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedAccountId(val);
+                if (val !== 'all') {
+                  selectAccountInStore(val);
+                }
+              }}
               className="bg-gray-50 dark:bg-gray-750 text-xs font-semibold text-gray-900 dark:text-gray-100 rounded-xl px-3 py-1.5 border border-gray-200 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-primary-500 cursor-pointer"
               aria-label="Selecionar conta para filtrar o Dashboard"
             >

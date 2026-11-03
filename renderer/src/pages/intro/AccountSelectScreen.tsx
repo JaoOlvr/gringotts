@@ -23,7 +23,8 @@ import {
   EyeOff, 
   ArrowRight,
   KeyRound,
-  Trash2
+  Trash2,
+  Pencil
 } from 'lucide-react';
 import type { Account } from '../../types';
 
@@ -37,6 +38,7 @@ export const AccountSelectScreen: React.FC = () => {
   const [selectedForSecurity, setSelectedForSecurity] = useState<Account | null>(null);
   const [selectedForDelete, setSelectedForDelete] = useState<Account | null>(null);
   const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
+  const [editingAccountId, setEditingAccountId] = useState<string | null>(null);
   const [showBalances, setShowBalances] = useState(true);
 
   const getAccountIcon = (type: string) => {
@@ -86,14 +88,14 @@ export const AccountSelectScreen: React.FC = () => {
       setSelectedForUnlock(acc);
     } else {
       unlockAccount(acc.id);
-      navigate('/');
+      navigate('/', { state: { selectedAccountId: acc.id } });
     }
   };
 
   const handleUnlocked = (accountId: string) => {
     setSelectedForUnlock(null);
     unlockAccount(accountId);
-    navigate('/');
+    navigate('/', { state: { selectedAccountId: accountId } });
   };
 
   return (
@@ -180,6 +182,19 @@ export const AccountSelectScreen: React.FC = () => {
                         title={isLocked ? 'Alterar ou remover senha' : 'Adicionar senha a esta conta'}
                       >
                         <KeyRound className="w-3.5 h-3.5" />
+                      </button>
+
+                      {/* Botão de Editar Conta e Saldo Inicial */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingAccountId(acc.id);
+                        }}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors"
+                        title="Editar carteira, saldo e configurações"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
                       </button>
 
                       {/* Botão de Excluir Conta com Confirmação/Senha */}
@@ -274,11 +289,13 @@ export const AccountSelectScreen: React.FC = () => {
         onDeleted={reloadAccounts}
       />
 
-      {/* Modal de Criação de Nova Conta */}
+      {/* Modal de Criação / Edição de Conta */}
       <AccountFormModal
-        isOpen={isCreateAccountOpen}
+        isOpen={isCreateAccountOpen || !!editingAccountId}
+        accountId={editingAccountId}
         onClose={() => {
           setIsCreateAccountOpen(false);
+          setEditingAccountId(null);
           reloadAccounts();
         }}
       />
