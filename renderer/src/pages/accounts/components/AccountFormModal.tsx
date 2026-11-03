@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../lib/ipc';
 import { useAccountStore } from '../../../store/useAccountStore';
 import { Input } from '../../../components/ui/input';
@@ -46,6 +47,7 @@ export const AccountFormModal: React.FC<AccountFormModalProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const accounts = useAccountStore((s) => s.accounts);
   const { setAccounts, setLoading: setStoreLoading } = useAccountStore();
   
@@ -144,6 +146,10 @@ export const AccountFormModal: React.FC<AccountFormModalProps> = ({
       const updatedAccounts = await api.accounts.getAll();
       setAccounts(updatedAccounts);
       setStoreLoading(false);
+
+      await queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      await queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      await queryClient.invalidateQueries({ queryKey: ['recent-transactions'] });
       
       reset();
       onClose();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/ipc';
 import { formatCurrency } from '../../lib/utils';
 import { useAccountStore } from '../../store/useAccountStore';
@@ -7,7 +7,7 @@ import { Button } from '../../components/ui/button';
 import { AccountFormModal } from './components/AccountFormModal';
 import { AccountSecurityModal } from '../../components/security/AccountSecurityModal';
 import { DeleteAccountModal } from '../../components/security/DeleteAccountModal';
-import { Landmark, Plus, Trash2, KeyRound, Lock, ShieldCheck, Pencil, Layers, EyeOff } from 'lucide-react';
+import { Landmark, Plus, Trash2, KeyRound, Lock, ShieldCheck, Pencil, Layers, EyeOff, Loader2 } from 'lucide-react';
 import type { Account } from '../../types';
 
 export const AccountsPage: React.FC = () => {
@@ -16,6 +16,8 @@ export const AccountsPage: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [securityAccount, setSecurityAccount] = useState<Account | null>(null);
   const [deletingAccount, setDeletingAccount] = useState<Account | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   
   const {
     data: fetchedAccounts,
@@ -48,7 +50,24 @@ export const AccountsPage: React.FC = () => {
   const handleDelete = async (id: string, name: string) => {
     if (window.confirm(`Tem certeza de que deseja excluir a conta "${name}"?`)) {
       await api.accounts.delete(id);
+      await queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      await queryClient.invalidateQueries({ queryKey: ['transactions'] });
       refetch();
+    }
+  };
+
+  const handleToggleInclude = async (acc: Account) => {
+    try {
+      setTogglingId(acc.id);
+      const nextVal = acc.includeInTotal === false ? true : false;
+      await api.accounts.update(acc.id, { includeInTotal: nextVal });
+      await queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      await queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      await refetch();
+    } catch (err) {
+      console.error('Erro ao alternar inclusão da conta no total:', err);
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -215,17 +234,37 @@ export const AccountsPage: React.FC = () => {
                       </span>
                     )}
 
-                    {account.includeInTotal !== false ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/40" title="Esta conta é somada no saldo geral e relatórios">
-                        <Layers className="w-3 h-3" />
-                        Somada no total
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 dark:bg-gray-750 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700" title="Esta carteira fica isolada e não é somada no saldo geral">
-                        <EyeOff className="w-3 h-3 text-amber-500" />
-                        Não somada
-                      </span>
-                    )}
+                    {/* Botão de Alternância Direta de Soma */}
+                    <button
+                      type="button"
+                      disabled={togglingId === account.id}
+                      onClick={() => handleToggleInclude(account)}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold transition-all border cursor-pointer select-none ${
+                        account.includeInTotal !== false
+                          ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200/80 dark:border-blue-800/60 hover:bg-blue-100 dark:hover:bg-blue-900/40'
+                          : 'bg-gray-100 dark:bg-gray-750 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                      title={account.includeInTotal !== false ? 'Clique para isolar esta conta (não somar nos totais)' : 'Clique para incluir esta conta no saldo e receitas gerais'}
+                    >
+                      {togglingId === account.id ? (
+                        <>
+                          <Loader2 className="w-3 h-3 animate-spin text-gray-400" />
+                          <span>Atualizando...</span>
+                        </>
+                      ) : account.includeInTotal !== false ? (
+                        <>
+                          <Layers className="w-3 h-3 text-blue-500" />
+                          <span>Somada no total</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="w-3 h-3 text-amber-500" />
+                          <span>Não somada</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
 

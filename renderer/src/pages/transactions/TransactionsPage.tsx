@@ -4,11 +4,13 @@ import { api } from '../../lib/ipc';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { Button } from '../../components/ui/button';
 import { TransactionsTable } from './components/TransactionsTable';
-import { Plus, ReceiptText } from 'lucide-react';
+import { Plus, ReceiptText, Landmark } from 'lucide-react';
+import type { Account } from '../../types';
 
 export const TransactionsPage: React.FC = () => {
   const { transactions, setTransactions, setLoading, setError, quickAddOpen, setQuickAddOpen } = useTransactionStore();
   const [defaultAccountId, setDefaultAccountId] = useState<string>('');
+  const [filterAccountId, setFilterAccountId] = useState<string>('all');
   const queryClient = useQueryClient();
 
   const {
@@ -26,6 +28,11 @@ export const TransactionsPage: React.FC = () => {
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: () => api.categories.getAll(),
+  });
+
+  const { data: accounts = [] } = useQuery<Account[]>({
+    queryKey: ['accounts'],
+    queryFn: () => api.accounts.getAll(),
   });
 
   useEffect(() => {
@@ -83,9 +90,18 @@ export const TransactionsPage: React.FC = () => {
     }
   };
 
+  const filteredTransactions = transactions.filter((tx) => {
+    if (filterAccountId === 'all') return true;
+    if (filterAccountId === 'included') {
+      const acc = accounts.find((a) => a.id === tx.accountId);
+      return acc ? acc.isActive && acc.includeInTotal !== false : false;
+    }
+    return tx.accountId === filterAccountId;
+  });
+
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
             Lançamentos
@@ -94,10 +110,37 @@ export const TransactionsPage: React.FC = () => {
             Histórico completo de receitas, despesas e transferências
           </p>
         </div>
-        <Button onClick={() => setQuickAddOpen(true)} className="gap-2">
-          <Plus className="w-4 h-4" />
-          Novo Lançamento
-        </Button>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Seletor de Conta para Filtrar */}
+          <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-1.5 px-3 rounded-2xl shadow-2xs">
+            <Landmark className="w-4 h-4 text-primary-500 shrink-0" />
+            <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
+              Conta:
+            </span>
+            <select
+              value={filterAccountId}
+              onChange={(e) => setFilterAccountId(e.target.value)}
+              className="bg-gray-50 dark:bg-gray-750 text-xs font-semibold text-gray-900 dark:text-gray-100 rounded-xl px-2.5 py-1.5 border border-gray-200 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-primary-500 cursor-pointer"
+              aria-label="Filtrar lançamentos por conta"
+            >
+              <option value="all">Todas as Contas</option>
+              <option value="included">Apenas Contas Somadas no Total</option>
+              <optgroup label="Contas">
+                {accounts.map((acc) => (
+                  <option key={acc.id} value={acc.id}>
+                    {acc.name} {acc.includeInTotal === false ? '(Isolada)' : ''}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+          </div>
+
+          <Button onClick={() => setQuickAddOpen(true)} className="gap-2">
+            <Plus className="w-4 h-4" />
+            Novo Lançamento
+          </Button>
+        </div>
       </div>
 
       {isLoading && (
@@ -125,8 +168,19 @@ export const TransactionsPage: React.FC = () => {
         </div>
       )}
 
-      {!isLoading && transactions.length > 0 && (
-        <TransactionsTable transactions={transactions} categories={categories} onDelete={handleDelete} />
+      {!isLoading && transactions.length > 0 && filteredTransactions.length === 0 && (
+        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-6 text-sm text-gray-500 dark:text-gray-400">
+          Nenhum lançamento encontrado para a conta selecionada.
+        </div>
+      )}
+
+      {!isLoading && filteredTransactions.length > 0 && (
+        <TransactionsTable 
+          transactions={filteredTransactions} 
+          categories={categories} 
+          accounts={accounts}
+          onDelete={handleDelete} 
+        />
       )}
     </div>
   );

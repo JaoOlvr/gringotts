@@ -1,5 +1,5 @@
-import { db, accounts, transactions } from '../services/db';
-import { eq } from 'drizzle-orm';
+import { db, accounts, transactions, transfers } from '../services/db';
+import { eq, or } from 'drizzle-orm';
 import { Account, LockType } from '../../domain/entities/account';
 import crypto from 'node:crypto';
 import { hashSecret, verifySecret } from '../services/cryptoService';
@@ -188,6 +188,10 @@ export class AccountsRepository {
         throw new Error('PIN ou Senha incorreto. Não foi possível excluir a conta.');
       }
     }
+
+    // Exclui transações e transferências associadas a esta conta para não deixar dados órfãos
+    await db.delete(transactions).where(eq(transactions.account_id, id));
+    await db.delete(transfers).where(or(eq(transfers.from_account_id, id), eq(transfers.to_account_id, id)));
 
     const result = await db.delete(accounts).where(eq(accounts.id, id));
     return (result as any).changes > 0 || (result as any).rowCount > 0;

@@ -124,6 +124,14 @@ export function runMigrations() {
     try { sqlite.exec(`ALTER TABLE accounts ADD COLUMN password_hash TEXT;`); } catch {}
     try { sqlite.exec(`ALTER TABLE accounts ADD COLUMN salt TEXT;`); } catch {}
 
+    // Limpeza de transações e transferências órfãs cujas contas já foram excluídas
+    try {
+      sqlite.exec(`DELETE FROM transactions WHERE account_id NOT IN (SELECT id FROM accounts);`);
+      sqlite.exec(`DELETE FROM transfers WHERE from_account_id NOT IN (SELECT id FROM accounts) OR to_account_id NOT IN (SELECT id FROM accounts);`);
+    } catch (e) {
+      console.warn('Aviso ao limpar transações órfãs:', e);
+    }
+
     // Garante que todas as categorias padrão essenciais existam no banco
     const defaultCategories = [
       { id: 'cat-alimentacao', name: 'Alimentação', group: 'Essenciais', color: '#ef4444', type: 'EXPENSE', icon: 'utensils' },

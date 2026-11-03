@@ -93,4 +93,36 @@ describe('Configuração de Carteira e Soma de Contas no Dashboard', () => {
     // Apenas a transação da conta somada acc-1 (2.000 = 200000 centavos)
     expect(income).toBe(200000);
   });
+
+  it('deve isolar estritamente o saldo e lançamentos quando o usuário seleciona uma conta específica', () => {
+    const selectedAccountId = 'acc-3'; // Reserva de Emergência
+    const target = accounts.find((a) => a.id === selectedAccountId);
+    expect(target).toBeDefined();
+
+    const transactions: MockTransaction[] = [
+      { id: 'tx-1', accountId: 'acc-1', amountCents: 200000, type: 'INCOME', description: 'Salário Nubank' },
+      { id: 'tx-2', accountId: 'acc-3', amountCents: 15000, type: 'INCOME', description: 'Rendimento Reserva' },
+    ];
+
+    // Saldo individual
+    const displayedBalance = target ? target.balanceCents : 0;
+    expect(displayedBalance).toBe(1000000); // Somente 10.000 da reserva
+
+    // Transações individuais da conta selecionada
+    const accountTxs = transactions.filter((t) => t.accountId === selectedAccountId);
+    expect(accountTxs).toHaveLength(1);
+    expect(accountTxs[0]!.description).toBe('Rendimento Reserva');
+  });
+
+  it('deve alternar a inclusão da conta quando o usuário clica no toggle', () => {
+    const account: MockAccount = { id: 'acc-1', name: 'Nubank', balanceCents: 100000, isActive: true, includeInTotal: true };
+    
+    // Toggle para desativar soma
+    account.includeInTotal = !account.includeInTotal;
+    expect(account.includeInTotal).toBe(false);
+
+    // Toggle para reativar soma
+    account.includeInTotal = !account.includeInTotal;
+    expect(account.includeInTotal).toBe(true);
+  });
 });

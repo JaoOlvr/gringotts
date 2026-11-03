@@ -6,11 +6,13 @@ import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 interface TransactionsTableProps {
   transactions: Transaction[];
   categories?: Array<{ id: string; name: string; color?: string }>;
+  accounts?: Array<{ id: string; name: string; color?: string; includeInTotal?: boolean }>;
   onDelete?: (id: string) => void;
 }
 
-export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactions, categories = [], onDelete }) => {
+export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactions, categories = [], accounts = [], onDelete }) => {
   const categoryMap = new Map(categories.map(c => [c.id, c]));
+  const accountMap = new Map(accounts.map(a => [a.id, a]));
   const [sortConfig, setSortConfig] = useState<{ key: keyof Transaction; direction: 'asc' | 'desc' }>({
     key: 'date',
     direction: 'desc',
@@ -72,6 +74,9 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactio
             <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Categoria
             </th>
+            <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Conta
+            </th>
             <th 
               onClick={() => requestSort('amountCents')}
               className="px-6 py-3.5 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 select-none"
@@ -97,6 +102,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactio
             const dateStr = isNaN(txDate.getTime()) ? '-' : txDate.toLocaleDateString('pt-BR');
             const isIncome = tx.type === 'INCOME';
             const cat = tx.categoryId ? categoryMap.get(tx.categoryId) : null;
+            const acc = accountMap.get(tx.accountId);
 
             const tags = Array.isArray(tx.tags)
               ? tx.tags
@@ -134,6 +140,21 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactio
                     </span>
                   ) : (
                     <span className="text-xs text-gray-400">Sem categoria</span>
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {acc ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-750 text-gray-800 dark:text-gray-200">
+                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: acc.color || '#3b82f6' }} />
+                      <span className="max-w-[120px] truncate">{acc.name}</span>
+                      {acc.includeInTotal === false && (
+                        <span className="text-[10px] text-amber-500 font-bold ml-0.5" title="Conta não somada no total">
+                          (isolada)
+                        </span>
+                      )}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-gray-400">Conta excluída</span>
                   )}
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-semibold ${
