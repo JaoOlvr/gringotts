@@ -161,6 +161,15 @@ export const api = {
       }
       return newTx;
     },
+    createMany: async (transactionsList: Array<Omit<Transaction, 'id' | 'createdAt'>>): Promise<Transaction[]> => {
+      if (isElectron) return window.api!.invoke('transactions:createMany', transactionsList);
+      const results: Transaction[] = [];
+      for (const t of transactionsList) {
+        const res = await api.transactions.create(t);
+        results.push(res);
+      }
+      return results;
+    },
     update: async (id: string, transaction: Partial<Omit<Transaction, 'id' | 'createdAt'>>): Promise<Transaction | null> => {
       if (isElectron) return window.api!.invoke('transactions:update', { id, transactionData: transaction });
       const idx = mockTransactions.findIndex(t => t.id === id);

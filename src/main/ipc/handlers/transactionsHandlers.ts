@@ -54,6 +54,15 @@ export function registerTransactionsHandlers() {
     return await transactionsRepository.createTransaction(parsed as any);
   });
 
+  // Create many transactions (parcelas / repetições)
+  ipcMain.handle('transactions:createMany', async (event, transactionsData: unknown[]) => {
+    if (!Array.isArray(transactionsData)) {
+      throw new Error('transactionsData must be an array');
+    }
+    const parsed = transactionsData.map(t => transactionSchema.parse(t));
+    return await transactionsRepository.createManyTransactions(parsed as any);
+  });
+
   // Update transaction
   ipcMain.handle('transactions:update', async (event, { id, transactionData }: { id: string; transactionData: unknown }) => {
     // Validate input

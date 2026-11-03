@@ -75,6 +75,7 @@ export class TransactionsRepository {
         if (txs.length > 0) {
           let calculated = 0;
           for (const t of txs) {
+            if (t.status === 'PENDING') continue;
             const isTrIn = this.isTransferIn(t);
             if (t.type === 'INCOME' || (t.type === 'TRANSFER' && isTrIn)) {
               calculated += Math.abs(t.amount_cents);
@@ -166,7 +167,10 @@ export class TransactionsRepository {
     };
   }
 
-  private getTransactionBalanceDelta(t: { type: string; amountCents?: number; amount_cents?: number; tags?: string[] | string | null; description?: string | null }): number {
+  private getTransactionBalanceDelta(t: { type: string; amountCents?: number; amount_cents?: number; tags?: string[] | string | null; description?: string | null; status?: string }): number {
+    if (t.status === 'PENDING') {
+      return 0;
+    }
     const amount = Math.abs(t.amountCents ?? t.amount_cents ?? 0);
     const isTrIn = this.isTransferIn(t);
     if (t.type === 'INCOME' || (t.type === 'TRANSFER' && isTrIn)) {
@@ -212,6 +216,50 @@ export class TransactionsRepository {
       recurrenceId: newTransaction!.recurrence_id ?? undefined,
       createdAt: newTransaction!.created_at,
     };
+  }
+
+  async createManyTransactions(txList: Omit<Transaction, 'id' | 'createdAt'>[]): Promise<Transaction[]> {
+    if (txList.length === 0) return [];
+    const now = new Date();
+    const created: Transaction[] = [];
+
+    for (const transaction of txList) {
+      const id = crypto.randomUUID();
+      const [newTransaction] = await db.insert(transactions).values({
+        id,
+        amount_cents: transaction.amountCents,
+        date: transaction.date,
+        description: transaction.description ?? null,
+        account_id: transaction.accountId,
+        category_id: transaction.categoryId ?? null,
+        type: transaction.type,
+        status: transaction.status,
+        tags: JSON.stringify(transaction.tags || []),
+        attachment_path: transaction.attachmentPath ?? null,
+        recurrence_id: transaction.recurrenceId ?? null,
+        created_at: now,
+      }).returning();
+
+      const delta = this.getTransactionBalanceDelta(transaction);
+      await this.applyBalanceDelta(transaction.accountId, delta);
+
+      created.push({
+        id: newTransaction!.id,
+        amountCents: newTransaction!.amount_cents,
+        date: newTransaction!.date,
+        description: newTransaction!.description ?? undefined,
+        accountId: newTransaction!.account_id,
+        categoryId: newTransaction!.category_id ?? undefined,
+        type: newTransaction!.type as any,
+        status: newTransaction!.status as any,
+        tags: transaction.tags || [],
+        attachmentPath: newTransaction!.attachment_path ?? undefined,
+        recurrenceId: newTransaction!.recurrence_id ?? undefined,
+        createdAt: newTransaction!.created_at,
+      });
+    }
+
+    return created;
   }
 
   async updateTransaction(id: string, transaction: Partial<Omit<Transaction, 'id' | 'createdAt'>>): Promise<Transaction | null> {

@@ -161,6 +161,14 @@ export const DashboardPage: React.FC = () => {
       return false;
     }
 
+    // Filtra pelo mês atual para as métricas mensais do dashboard
+    const txDate = new Date(t.date);
+    const txMonth = txDate.getMonth() + 1;
+    const txYear = txDate.getFullYear();
+    if (txMonth !== currentMonth || txYear !== currentYear) {
+      return false;
+    }
+
     return true;
   });
 
