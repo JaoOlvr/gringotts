@@ -59,12 +59,12 @@ export const OnboardingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex items-center justify-center bg-[#07090e] p-4 text-gray-100 relative overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#07090e] p-4 sm:p-6 text-gray-100 relative overflow-y-auto overflow-x-hidden">
       {/* Background glowing orbs */}
       <div className="absolute top-1/4 -left-40 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 -right-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-xl space-y-6 relative z-10">
+      <div className="w-full max-w-xl space-y-5 relative z-10 my-auto py-6">
         {/* Banner de Demonstração Rápida */}
         <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-primary-500/10 to-indigo-500/10 border border-amber-500/20 backdrop-blur-md flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">

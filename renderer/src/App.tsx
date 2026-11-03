@@ -44,7 +44,7 @@ function App() {
 
   if (initialLoading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center gap-3">
           <GringottsLogo className="w-12 h-12 rounded-2xl animate-pulse shadow-lg shadow-amber-500/20" />
           <span className="text-sm font-medium text-gray-500">Iniciando Gringotts...</span>

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut } from 'electron';
+import { app, BrowserWindow, globalShortcut, screen } from 'electron';
 import path from 'node:path';
 import { runMigrations } from './services/db';
 import { registerAllHandlers } from './ipc';
@@ -7,11 +7,20 @@ import { TransactionsRepository } from './repositories/transactionsRepository';
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: workWidth, height: workHeight } = primaryDisplay.workAreaSize;
+
+  // Dimensões ideais para Windows, adaptando-se a monitores 1366x768 ou 1080p com escala (125%/150%)
+  const defaultWidth = Math.min(1280, Math.max(980, Math.round(workWidth * 0.92)));
+  const defaultHeight = Math.min(760, Math.max(580, Math.round(workHeight * 0.90)));
+
   const win = new BrowserWindow({
-    width: 1280,
-    height: 840,
-    minWidth: 900,
-    minHeight: 650,
+    width: defaultWidth,
+    height: defaultHeight,
+    minWidth: 800,
+    minHeight: 520,
+    center: true,
+    autoHideMenuBar: true, // Oculta a barra de menu padrão do Windows para liberar área útil vertical
     backgroundColor: '#0f172a',
     title: 'Gringotts - Controle Financeiro',
     icon: path.join(__dirname, '../../resources/icon.png'),
@@ -22,6 +31,11 @@ function createWindow() {
       sandbox: true,
     },
   });
+
+  // Em telas de notebook compactas (altura útil de trabalho <= 800px), maximiza para visualização ideal
+  if (workHeight <= 800) {
+    win.maximize();
+  }
 
   const isDev = process.env.NODE_ENV === 'development' || (!app.isPackaged && process.env.NODE_ENV !== 'production');
 

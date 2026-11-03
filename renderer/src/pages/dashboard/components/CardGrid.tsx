@@ -1,4 +1,6 @@
+import React from 'react';
 import { formatCurrency } from '../../../lib/utils';
+import { Wallet, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react';
 
 interface CardGridProps {
   totalBalance: number;
@@ -16,98 +18,88 @@ export const CardGrid: React.FC<CardGridProps> = ({
   savingsRate 
 }) => {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
       {/* Total Balance Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-750 shadow-2xs p-4 sm:p-5 flex flex-col justify-between">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Saldo Total
             </p>
-            <p className="text-2xl font-bold mt-1">
+            <p className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mt-1">
               {formatCurrency(totalBalance)}
             </p>
           </div>
-          <div className="flex items-center space-x-2">
-            {/* Icon would go here */}
-            <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-              {/* Dollar sign or account icon */}
-              <span className="text-gray-500 dark:text-gray-400">$</span>
-            </div>
+          <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0">
+            <Wallet className="w-5 h-5" />
           </div>
         </div>
       </div>
       
       {/* Income This Month Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-750 shadow-2xs p-4 sm:p-5 flex flex-col justify-between">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Receitas do Mês
             </p>
-            <p className="text-2xl font-bold text-success-600 dark:text-success-400 mt-1">
+            <p className="text-xl sm:text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 mt-1">
               {formatCurrency(incomeThisMonth)}
             </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-full bg-success-100 dark:bg-success-900 flex items-center justify-center">
-              <span className="text-success-600 dark:text-success-400">+</span>
-            </div>
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <TrendingUp className="w-5 h-5" />
           </div>
         </div>
       </div>
       
       {/* Expenses This Month Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-750 shadow-2xs p-4 sm:p-5 flex flex-col justify-between">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Despesas do Mês
             </p>
-            <p className="text-2xl font-bold text-danger-600 dark:text-danger-400 mt-1">
+            <p className="text-xl sm:text-2xl font-bold tracking-tight text-rose-600 dark:text-rose-400 mt-1">
               {formatCurrency(expensesThisMonth)}
             </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-full bg-danger-100 dark:bg-danger-900 flex items-center justify-center">
-              <span className="text-danger-600 dark:text-danger-400">-</span>
-            </div>
+          <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+            <TrendingDown className="w-5 h-5" />
           </div>
         </div>
       </div>
       
       {/* Net This Month / Savings Rate Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-750 shadow-2xs p-4 sm:p-5 flex flex-col justify-between">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Resultado do Mês
             </p>
-            <p className="text-2xl font-bold mt-1">
+            <p className={`text-xl sm:text-2xl font-bold tracking-tight mt-1 ${
+              netThisMonth >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+            }`}>
               {formatCurrency(netThisMonth)}
             </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-full 
-              {netThisMonth >= 0 ? 'bg-success-100 dark:bg-success-900' : 'bg-danger-100 dark:bg-danger-900'} 
-              flex items-center justify-center">
-              <span className={`
-                ${netThisMonth >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}
-              `}>
-                {netThisMonth >= 0 ? '+' : '-'}
-              </span>
-            </div>
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+            netThisMonth >= 0 
+              ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400' 
+              : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
+          }`}>
+            <PiggyBank className="w-5 h-5" />
           </div>
         </div>
-        <div className="mt-4">
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Taxa de Poupança
-          </p>
-          <p className="text-lg font-bold mt-1">
+        <div className="mt-2.5 pt-2 border-t border-gray-100 dark:border-gray-750/70 flex items-center justify-between text-xs">
+          <span className="text-gray-500 dark:text-gray-400">Poupança:</span>
+          <span className={`font-bold ${savingsRate >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
             {savingsRate >= 0 ? '+' : ''}{savingsRate.toFixed(1)}%
-          </p>
+          </span>
         </div>
       </div>
     </div>
   );
 };
+
+export default CardGrid;
