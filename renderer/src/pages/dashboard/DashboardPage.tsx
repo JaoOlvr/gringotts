@@ -99,9 +99,37 @@ export const DashboardPage: React.FC = () => {
     );
   }
 
-  const totalBalance = accounts.reduce((sum: number, acc: Account) => sum + acc.balanceCents, 0);
-  const incomeThisMonth = transactions.filter((t: Transaction) => t.type === 'INCOME').reduce((sum: number, t: Transaction) => sum + t.amountCents, 0);
-  const expensesThisMonth = transactions.filter((t: Transaction) => t.type === 'EXPENSE').reduce((sum: number, t: Transaction) => sum + Math.abs(t.amountCents), 0);
+  // Contas ativas selecionadas para somar nos totais gerais
+  const includedAccounts = accounts.filter((acc: Account) => acc.isActive && acc.includeInTotal !== false);
+  const includedAccountIds = new Set(includedAccounts.map((acc: Account) => acc.id));
+
+  // Saldo consolidado das contas somadas
+  const totalBalance = includedAccounts.reduce((sum: number, acc: Account) => sum + acc.balanceCents, 0);
+
+  // Transações operacionais (exclui saldo inicial da receita e contas isoladas)
+  const operationalTransactions = transactions.filter((t: Transaction) => {
+    if (!includedAccountIds.has(t.accountId)) return false;
+
+    // Saldo inicial não deve inflar a receita operacional do mês
+    const isInitialBalance = 
+      (t.tags && t.tags.includes('saldo-inicial')) || 
+      (!!t.description && t.description.toLowerCase().startsWith('saldo inicial'));
+
+    if (t.type === 'INCOME' && isInitialBalance) {
+      return false;
+    }
+
+    return true;
+  });
+
+  const incomeThisMonth = operationalTransactions
+    .filter((t: Transaction) => t.type === 'INCOME')
+    .reduce((sum: number, t: Transaction) => sum + t.amountCents, 0);
+
+  const expensesThisMonth = operationalTransactions
+    .filter((t: Transaction) => t.type === 'EXPENSE')
+    .reduce((sum: number, t: Transaction) => sum + Math.abs(t.amountCents), 0);
+
   const netThisMonth = incomeThisMonth - expensesThisMonth;
   const savingsRate = incomeThisMonth > 0 ? (netThisMonth / incomeThisMonth) * 100 : 0;
 
@@ -136,23 +164,23 @@ export const DashboardPage: React.FC = () => {
       
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <ExpensesChart 
-          transactions={transactions}
+          transactions={operationalTransactions}
           categories={categories}
         />
         <IncomeExpensesChart 
-          transactions={transactions}
+          transactions={operationalTransactions}
           categories={categories}
         />
       </div>
 
       <MonthlyBalanceChart 
-        transactions={transactions}
+        transactions={operationalTransactions}
       />
       
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <BudgetsStatus 
           budgets={budgets}
-          transactions={transactions}
+          transactions={operationalTransactions}
           categories={categories}
           currentMonth={currentMonth}
           currentYear={currentYear}

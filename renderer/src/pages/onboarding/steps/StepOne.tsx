@@ -43,34 +43,8 @@ export const StepOne: React.FC<StepOneProps> = ({ onNext }) => {
         currency: 'BRL',
         color: selectedColor,
         isActive: true,
+        includeInTotal: true,
       });
-
-      // Se tiver saldo inicial positivo, cria também o lançamento inicial para alimentar os relatórios
-      if (balanceCents > 0) {
-        try {
-          const cats = await api.categories.getAll();
-          let initialCat = cats.find(c => c.name.includes('Salário') || c.type === 'INCOME');
-          if (!initialCat) {
-            initialCat = await api.categories.create({
-              name: 'Saldo Inicial',
-              type: 'INCOME',
-              color: '#10b981',
-            });
-          }
-          await api.transactions.create({
-            amountCents: balanceCents,
-            date: new Date(),
-            description: `Saldo inicial - ${accountName}`,
-            accountId: acc.id,
-            categoryId: initialCat?.id,
-            type: 'INCOME',
-            status: 'PAID',
-            tags: ['saldo-inicial'],
-          });
-        } catch (err) {
-          console.warn('Could not create initial transaction:', err);
-        }
-      }
 
       onNext();
     } catch (err) {

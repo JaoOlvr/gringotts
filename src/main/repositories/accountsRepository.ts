@@ -1,4 +1,4 @@
-import { db, accounts } from '../services/db';
+import { db, accounts, transactions } from '../services/db';
 import { eq } from 'drizzle-orm';
 import { Account, LockType } from '../../domain/entities/account';
 import crypto from 'node:crypto';
@@ -16,6 +16,7 @@ export class AccountsRepository {
       color: acc.color,
       icon: acc.icon,
       isActive: acc.is_active,
+      includeInTotal: acc.include_in_total !== false && (acc.include_in_total as any) !== 0,
       isLocked: !!acc.is_locked,
       lockType: (acc.lock_type as LockType) || undefined,
       createdAt: acc.created_at,
@@ -36,6 +37,7 @@ export class AccountsRepository {
       color: acc.color,
       icon: acc.icon,
       isActive: acc.is_active,
+      includeInTotal: acc.include_in_total !== false && (acc.include_in_total as any) !== 0,
       isLocked: !!acc.is_locked,
       lockType: (acc.lock_type as LockType) || undefined,
       createdAt: acc.created_at,
@@ -46,6 +48,8 @@ export class AccountsRepository {
   async createAccount(account: Omit<Account, 'id' | 'createdAt' | 'updatedAt'>): Promise<Account> {
     const id = crypto.randomUUID();
     const now = new Date();
+    const includeInTotal = account.includeInTotal !== undefined ? !!account.includeInTotal : true;
+
     const [newAccount] = await db.insert(accounts).values({
       id,
       name: account.name,
@@ -55,11 +59,31 @@ export class AccountsRepository {
       color: account.color,
       icon: account.icon,
       is_active: !!account.isActive,
+      include_in_total: includeInTotal,
       is_locked: !!account.isLocked,
       lock_type: account.lockType || null,
       created_at: now,
       updated_at: now,
     }).returning();
+
+    // Se tiver saldo inicial positivo, cria o lançamento inicial para manter integridade com os recálculos
+    if (account.balanceCents > 0) {
+      try {
+        await db.insert(transactions).values({
+          id: crypto.randomUUID(),
+          amount_cents: account.balanceCents,
+          date: now,
+          description: `Saldo inicial - ${account.name}`,
+          account_id: id,
+          type: 'INCOME',
+          status: 'PAID',
+          tags: JSON.stringify(['saldo-inicial']),
+          created_at: now,
+        });
+      } catch (err) {
+        console.warn('Erro ao criar transação de saldo inicial:', err);
+      }
+    }
     
     return {
       id: newAccount.id,
@@ -70,6 +94,7 @@ export class AccountsRepository {
       color: newAccount.color,
       icon: newAccount.icon,
       isActive: newAccount.is_active,
+      includeInTotal: newAccount.include_in_total !== false && (newAccount.include_in_total as any) !== 0,
       isLocked: !!newAccount.is_locked,
       lockType: (newAccount.lock_type as LockType) || undefined,
       createdAt: newAccount.created_at,
@@ -81,11 +106,48 @@ export class AccountsRepository {
     const updateData: any = {};
     if (account.name !== undefined) updateData.name = account.name;
     if (account.type !== undefined) updateData.type = account.type;
-    if (account.balanceCents !== undefined) updateData.balance_cents = account.balanceCents;
     if (account.currency !== undefined) updateData.currency = account.currency;
     if (account.color !== undefined) updateData.color = account.color;
     if (account.icon !== undefined) updateData.icon = account.icon;
     if (account.isActive !== undefined) updateData.is_active = account.isActive;
+    if (account.includeInTotal !== undefined) updateData.include_in_total = !!account.includeInTotal;
+
+    // Se o saldo for alterado diretamente na edição da carteira
+    if (account.balanceCents !== undefined) {
+      updateData.balance_cents = account.balanceCents;
+
+      // Sincroniza a transação de saldo inicial correspondente à conta
+      try {
+        const allTx = await db.select().from(transactions).where(eq(transactions.account_id, id));
+        const initialTx = allTx.find(t => {
+          let tags: string[] = [];
+          try { tags = JSON.parse(t.tags || '[]'); } catch {}
+          return tags.includes('saldo-inicial') || (!!t.description && t.description.toLowerCase().startsWith('saldo inicial'));
+        });
+
+        if (initialTx) {
+          await db.update(transactions).set({
+            amount_cents: account.balanceCents,
+          }).where(eq(transactions.id, initialTx.id));
+        } else if (allTx.length === 0 && account.balanceCents > 0) {
+          // Se for uma conta sem transações, cria o registro de saldo inicial
+          await db.insert(transactions).values({
+            id: crypto.randomUUID(),
+            amount_cents: account.balanceCents,
+            date: new Date(),
+            description: `Saldo inicial - ${account.name || 'Conta'}`,
+            account_id: id,
+            type: 'INCOME',
+            status: 'PAID',
+            tags: JSON.stringify(['saldo-inicial']),
+            created_at: new Date(),
+          });
+        }
+      } catch (err) {
+        console.warn('Erro ao sincronizar transação de saldo inicial na atualização de conta:', err);
+      }
+    }
+
     updateData.updated_at = new Date();
 
     const [updatedAccount] = await db.update(accounts).set(updateData).where(eq(accounts.id, id)).returning();
@@ -100,6 +162,7 @@ export class AccountsRepository {
       color: updatedAccount.color,
       icon: updatedAccount.icon,
       isActive: updatedAccount.is_active,
+      includeInTotal: updatedAccount.include_in_total !== false && (updatedAccount.include_in_total as any) !== 0,
       isLocked: !!updatedAccount.is_locked,
       lockType: (updatedAccount.lock_type as LockType) || undefined,
       createdAt: updatedAccount.created_at,

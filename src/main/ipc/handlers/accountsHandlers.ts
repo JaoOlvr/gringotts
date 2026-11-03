@@ -14,6 +14,7 @@ const accountSchema = z.object({
   color: z.string().optional(),
   icon: z.string().optional(),
   isActive: z.boolean().default(true),
+  includeInTotal: z.boolean().default(true).optional(),
 });
 
 // For update, we allow partial
@@ -39,10 +40,11 @@ export function registerAccountsHandlers() {
   });
 
   // Update account
-  ipcMain.handle('accounts:update', async (event, { id, accountData }: { id: string; accountData: unknown }) => {
+  ipcMain.handle('accounts:update', async (event, payload: { id: string; account?: unknown; accountData?: unknown }) => {
     // Validate input
-    const parsed = updateAccountSchema.parse(accountData);
-    return await accountsRepository.updateAccount(id, parsed);
+    const rawData = payload.accountData !== undefined ? payload.accountData : payload.account;
+    const parsed = updateAccountSchema.parse(rawData);
+    return await accountsRepository.updateAccount(payload.id, parsed);
   });
 
   // Delete account

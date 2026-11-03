@@ -7,7 +7,7 @@ import { Button } from '../../components/ui/button';
 import { AccountFormModal } from './components/AccountFormModal';
 import { AccountSecurityModal } from '../../components/security/AccountSecurityModal';
 import { DeleteAccountModal } from '../../components/security/DeleteAccountModal';
-import { Landmark, Plus, Trash2, KeyRound, Lock, ShieldCheck, Pencil } from 'lucide-react';
+import { Landmark, Plus, Trash2, KeyRound, Lock, ShieldCheck, Pencil, Layers, EyeOff } from 'lucide-react';
 import type { Account } from '../../types';
 
 export const AccountsPage: React.FC = () => {
@@ -58,6 +58,10 @@ export const AccountsPage: React.FC = () => {
   };
 
   const displayAccounts = fetchedAccounts ?? accounts;
+  const includedAccounts = displayAccounts.filter((a) => a.isActive && a.includeInTotal !== false);
+  const excludedAccounts = displayAccounts.filter((a) => a.isActive && a.includeInTotal === false);
+  const totalIncludedCents = includedAccounts.reduce((sum, a) => sum + a.balanceCents, 0);
+  const totalExcludedCents = excludedAccounts.reduce((sum, a) => sum + a.balanceCents, 0);
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
@@ -75,6 +79,43 @@ export const AccountsPage: React.FC = () => {
           Nova Conta
         </Button>
       </div>
+
+      {/* Resumo Consolidado das Carteiras */}
+      {displayAccounts.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-750 shadow-2xs">
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <span className="flex items-center gap-1.5 font-medium">
+                <Layers className="w-3.5 h-3.5 text-blue-500" />
+                Saldo Total Consolidado
+              </span>
+              <span className="text-[10px] bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 font-bold px-2 py-0.5 rounded-full">
+                {includedAccounts.length} {includedAccounts.length === 1 ? 'conta somada' : 'contas somadas'}
+              </span>
+            </div>
+            <div className={`text-2xl font-bold mt-2 ${totalIncludedCents >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+              {formatCurrency(totalIncludedCents)}
+            </div>
+          </div>
+
+          {excludedAccounts.length > 0 && (
+            <div className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-750 shadow-2xs">
+              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                <span className="flex items-center gap-1.5 font-medium text-amber-600 dark:text-amber-400">
+                  <EyeOff className="w-3.5 h-3.5" />
+                  Contas Isoladas (Não somadas)
+                </span>
+                <span className="text-[10px] bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold px-2 py-0.5 rounded-full">
+                  {excludedAccounts.length} {excludedAccounts.length === 1 ? 'carteira' : 'carteiras'}
+                </span>
+              </div>
+              <div className="text-2xl font-bold mt-2 text-gray-700 dark:text-gray-300">
+                {formatCurrency(totalExcludedCents)}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       
       {isLoading && (
         <div className="h-64 flex items-center justify-center">
@@ -160,17 +201,29 @@ export const AccountsPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Status de Bloqueio */}
-                  <div className="mt-3">
+                  {/* Status de Bloqueio e Configuração de Soma */}
+                  <div className="mt-3 flex items-center gap-1.5 flex-wrap">
                     {isLocked ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40">
                         <Lock className="w-3 h-3" />
-                        {account.lockType === 'PIN' ? 'Protegida por PIN' : 'Protegida por Senha'}
+                        {account.lockType === 'PIN' ? 'PIN' : 'Senha'}
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
                         <ShieldCheck className="w-3 h-3" />
-                        Acesso Livre (Sem senha)
+                        Livre
+                      </span>
+                    )}
+
+                    {account.includeInTotal !== false ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/40" title="Esta conta é somada no saldo geral e relatórios">
+                        <Layers className="w-3 h-3" />
+                        Somada no total
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 dark:bg-gray-750 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700" title="Esta carteira fica isolada e não é somada no saldo geral">
+                        <EyeOff className="w-3 h-3 text-amber-500" />
+                        Não somada
                       </span>
                     )}
                   </div>

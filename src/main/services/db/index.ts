@@ -31,6 +31,7 @@ export function runMigrations() {
         color TEXT,
         icon TEXT,
         is_active INTEGER NOT NULL DEFAULT 1,
+        include_in_total INTEGER NOT NULL DEFAULT 1,
         is_locked INTEGER NOT NULL DEFAULT 0,
         lock_type TEXT,
         password_hash TEXT,
@@ -116,7 +117,8 @@ export function runMigrations() {
     `);
     console.log('Database tables verified / created successfully');
 
-    // Migração segura para adicionar colunas de bloqueio se tabela já existir
+    // Migração segura para adicionar colunas de bloqueio e configuração se tabela já existir
+    try { sqlite.exec(`ALTER TABLE accounts ADD COLUMN include_in_total INTEGER NOT NULL DEFAULT 1;`); } catch {}
     try { sqlite.exec(`ALTER TABLE accounts ADD COLUMN is_locked INTEGER NOT NULL DEFAULT 0;`); } catch {}
     try { sqlite.exec(`ALTER TABLE accounts ADD COLUMN lock_type TEXT;`); } catch {}
     try { sqlite.exec(`ALTER TABLE accounts ADD COLUMN password_hash TEXT;`); } catch {}

@@ -17,6 +17,7 @@ export interface Account {
   color?: string;
   icon?: string;
   isActive: boolean;
+  includeInTotal?: boolean;
   isLocked?: boolean;
   lockType?: LockType;
   createdAt: Date;

@@ -15,6 +15,7 @@ export const accounts = sqliteTable('accounts', {
   color: text('color'),
   icon: text('icon'),
   is_active: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+  include_in_total: integer('include_in_total', { mode: 'boolean' }).notNull().default(true),
   is_locked: integer('is_locked', { mode: 'boolean' }).notNull().default(false),
   lock_type: text('lock_type'), // 'PIN' | 'PASSWORD'
   password_hash: text('password_hash'),
