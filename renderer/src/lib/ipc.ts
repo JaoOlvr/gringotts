@@ -15,7 +15,15 @@ export interface UpdateCheckResult {
   publishedAt?: string;
   platform: 'linux' | 'win32' | 'darwin' | string;
   arch?: string;
+  isAppImage?: boolean;
   error?: string;
+}
+
+export interface DownloadProgress {
+  percent: number;
+  transferred: number;
+  total: number;
+  bytesPerSecond: number;
 }
 
 // Interface for Electron Window API
@@ -292,9 +300,25 @@ export const api = {
       window.open(url, '_blank');
       return true;
     },
-    getAppInfo: async (): Promise<{ version: string; platform: string; arch: string }> => {
+    getAppInfo: async (): Promise<{ version: string; platform: string; arch: string; isAppImage?: boolean }> => {
       if (isElectron) return window.api!.invoke('updater:getAppInfo');
-      return { version: '1.2.0', platform: 'linux', arch: 'x64' };
+      return { version: '1.2.0', platform: 'linux', arch: 'x64', isAppImage: false };
+    },
+    startDownload: async (url?: string): Promise<{ success: boolean; filePath?: string; error?: string }> => {
+      if (isElectron) return window.api!.invoke('updater:startDownload', url);
+      return { success: false, error: 'Não suportado no navegador' };
+    },
+    cancelDownload: async (): Promise<boolean> => {
+      if (isElectron) return window.api!.invoke('updater:cancelDownload');
+      return true;
+    },
+    install: async (): Promise<{ success: boolean; error?: string }> => {
+      if (isElectron) return window.api!.invoke('updater:install');
+      return { success: false, error: 'Não suportado no navegador' };
+    },
+    getDownloadStatus: async (): Promise<{ hasDownloaded: boolean; filePath?: string; version?: string }> => {
+      if (isElectron) return window.api!.invoke('updater:getDownloadStatus');
+      return { hasDownloaded: false };
     },
   },
 

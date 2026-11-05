@@ -15,9 +15,30 @@ export function registerUpdaterHandlers() {
   // Obter versão e plataforma do app
   ipcMain.handle('updater:getAppInfo', async () => {
     return {
-      version: app ? app.getVersion() : '1.0.0',
+      version: app ? app.getVersion() : '1.2.0',
       platform: process.platform,
       arch: process.arch,
+      isAppImage: !!process.env.APPIMAGE,
     };
+  });
+
+  // Iniciar download em segundo plano
+  ipcMain.handle('updater:startDownload', async (_event, customUrl?: string) => {
+    return await updaterService.startDownload(customUrl);
+  });
+
+  // Cancelar download em andamento
+  ipcMain.handle('updater:cancelDownload', async () => {
+    return updaterService.cancelDownload();
+  });
+
+  // Instalar atualização e reiniciar
+  ipcMain.handle('updater:install', async () => {
+    return await updaterService.installUpdate();
+  });
+
+  // Obter status do download local
+  ipcMain.handle('updater:getDownloadStatus', async () => {
+    return updaterService.getDownloadStatus();
   });
 }

@@ -14,7 +14,8 @@ import {
   Heart,
   Calculator,
   ArrowUpCircle,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTransactionStore } from '../../store/useTransactionStore';
@@ -44,6 +45,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   const isCheckingUpdate = useUpdaterStore((s) => s.isChecking);
   const checkForUpdates = useUpdaterStore((s) => s.checkForUpdates);
   const openUpdateModal = useUpdaterStore((s) => s.openModal);
+  const downloadStatus = useUpdaterStore((s) => s.downloadStatus);
+  const downloadProgress = useUpdaterStore((s) => s.downloadProgress);
 
   const activeAccount = accounts.find((a) => a.id === selectedAccountId) || accounts[0];
 
@@ -165,14 +168,40 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
         {hasUpdate && (
           <button
             onClick={() => openUpdateModal()}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-gray-950 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 hover:brightness-110 active:scale-[0.98] transition-all shadow-md shadow-amber-500/20"
-            title="Nova versão disponível - Clique para atualizar"
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-gray-950 transition-all shadow-md active:scale-[0.98] cursor-pointer ${
+              downloadStatus === 'downloaded'
+                ? 'bg-gradient-to-r from-emerald-400 to-teal-300 shadow-emerald-500/20 animate-pulse'
+                : downloadStatus === 'downloading'
+                ? 'bg-gradient-to-r from-amber-400 to-yellow-300 shadow-amber-500/20'
+                : 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 shadow-amber-500/20 hover:brightness-110'
+            }`}
+            title="Atualização disponível - Clique para ver"
           >
-            <ArrowUpCircle className="w-4 h-4 text-gray-950 stroke-[2.5] shrink-0" />
-            <span className="truncate">Nova versão v{updateInfo?.latestVersion}</span>
-            <span className="ml-auto text-[10px] bg-black/20 text-gray-950 font-black px-1.5 py-0.5 rounded uppercase">
-              Ver
-            </span>
+            {downloadStatus === 'downloaded' ? (
+              <>
+                <RefreshCw className="w-4 h-4 text-gray-950 stroke-[2.5] shrink-0" />
+                <span className="truncate">Reiniciar (v{updateInfo?.latestVersion})</span>
+                <span className="ml-auto text-[10px] bg-black/20 text-gray-950 font-black px-1.5 py-0.5 rounded uppercase">
+                  Pronto
+                </span>
+              </>
+            ) : downloadStatus === 'downloading' ? (
+              <>
+                <Loader2 className="w-4 h-4 text-gray-950 animate-spin shrink-0" />
+                <span className="truncate">Baixando ({downloadProgress?.percent || 0}%)</span>
+                <span className="ml-auto text-[10px] bg-black/20 text-gray-950 font-black px-1.5 py-0.5 rounded uppercase">
+                  {downloadProgress?.percent || 0}%
+                </span>
+              </>
+            ) : (
+              <>
+                <ArrowUpCircle className="w-4 h-4 text-gray-950 stroke-[2.5] shrink-0" />
+                <span className="truncate">Nova versão v{updateInfo?.latestVersion}</span>
+                <span className="ml-auto text-[10px] bg-black/20 text-gray-950 font-black px-1.5 py-0.5 rounded uppercase">
+                  Ver
+                </span>
+              </>
+            )}
           </button>
         )}
 

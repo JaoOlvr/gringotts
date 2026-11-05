@@ -1,7 +1,32 @@
 import { describe, it, expect } from 'vitest';
-import { compareSemver, pickBestAsset, GitHubAsset } from '../src/main/services/updaterService';
+import { compareSemver, pickBestAsset, formatBytes, GitHubAsset, updaterService } from '../src/main/services/updaterService';
 
 describe('Updater Service - Testes Unitários', () => {
+  describe('formatBytes', () => {
+    it('deve formatar 0 bytes corretamente', () => {
+      expect(formatBytes(0)).toBe('0 B');
+      expect(formatBytes(-10)).toBe('0 B');
+    });
+
+    it('deve formatar kilobytes, megabytes e gigabytes', () => {
+      expect(formatBytes(1024)).toBe('1.0 KB');
+      expect(formatBytes(1024 * 1024 * 15.5)).toBe('15.5 MB');
+      expect(formatBytes(1024 * 1024 * 1024 * 2.25)).toBe('2.3 GB');
+    });
+  });
+
+  describe('updaterService estado inicial', () => {
+    it('deve reportar status de download inicial vazio', () => {
+      const status = updaterService.getDownloadStatus();
+      expect(status.hasDownloaded).toBe(false);
+      expect(status.filePath).toBeNull();
+    });
+
+    it('cancelDownload deve retornar false se não houver download em andamento', () => {
+      expect(updaterService.cancelDownload()).toBe(false);
+    });
+  });
+
   describe('compareSemver', () => {
     it('deve identificar que uma versão remota maior requer atualização', () => {
       expect(compareSemver('1.0.0', '1.0.1')).toBeGreaterThan(0);
@@ -41,6 +66,16 @@ describe('Updater Service - Testes Unitários', () => {
       const best = pickBestAsset(mockAssets, 'win32');
       expect(best?.name).toBe('Gringotts-1.1.0-setup.exe');
       expect(best?.browser_download_url).toBe('https://gh/win.exe');
+    });
+
+    it('deve priorizar o instalador Setup mesmo quando o executável comum ou portátil vier antes', () => {
+      const assetsWithGenericFirst: GitHubAsset[] = [
+        { name: 'Gringotts 1.1.0.exe', browser_download_url: 'https://gh/portable.exe', size: 80000000 },
+        { name: 'Gringotts Setup 1.1.0.exe', browser_download_url: 'https://gh/setup.exe', size: 85000000 },
+      ];
+      const best = pickBestAsset(assetsWithGenericFirst, 'win32');
+      expect(best?.name).toBe('Gringotts Setup 1.1.0.exe');
+      expect(best?.browser_download_url).toBe('https://gh/setup.exe');
     });
 
     it('deve selecionar o arquivo .dmg para macOS (darwin)', () => {

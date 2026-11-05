@@ -34,6 +34,13 @@
   "build": {
     "appId": "com.gringotts.app",
     "productName": "Gringotts",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "JaoOlvr",
+        "repo": "gringotts"
+      }
+    ],
     "directories": {
       "output": "dist-electron",
       "buildResources": "resources"
@@ -67,7 +74,8 @@
           "target": "portable",
           "arch": [
             "x64"
-          ]
+          ],
+          "artifactName": "${productName}-${version}-portable.${ext}"
         }
       ],
       "icon": "resources/icon.ico"
@@ -105,6 +113,7 @@
   "dependencies": {
     "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.4",
+    "electron-updater": "^6.8.11",
     "recharts": "^3.10.1",
     "zod": "^4.6.7"
   },
