@@ -117,6 +117,6 @@ npm run dist
 - [ ] **Open Finance Brasil:** Conexão direta com extratos bancários via OFX e Open Finance.
 - [ ] **Leitura de Notas Fiscais e Comprovantes:** OCR local offline para preenchimento de lançamentos.
 - [ ] **Planejador de Dívidas:** Métodos Bola de Neve (*Snowball*) e Avalanche.
-- [ ] **Modo Calma:** Visão semanal minimalista sem sobrecarga de números.
+- [x] **Modo Calma:** Visão semanal minimalista sem sobrecarga de números, com ritmo qualitativo da semana, contador de dias de paz financeira e modo zen (ocultar cifras).
 - [ ] **Sincronização P2P:** Sincronização ponta-a-ponta entre dispositivos sem armazenamento em nuvem externa.
 # gringotts

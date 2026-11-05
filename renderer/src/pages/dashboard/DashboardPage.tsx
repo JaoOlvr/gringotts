@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar as CalendarIcon, Landmark, Layers } from 'lucide-react';
+import { Calendar as CalendarIcon, Landmark, Layers, Leaf } from 'lucide-react';
 import { api } from '../../lib/ipc';
 import { formatCurrency } from '../../lib/utils';
 import { useAccountStore } from '../../store/useAccountStore';
@@ -233,6 +233,15 @@ export const DashboardPage: React.FC = () => {
               </optgroup>
             </select>
           </div>
+
+          <Link
+            to="/calm"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold text-emerald-400 shadow-2xs hover:shadow-xs transition-all"
+            title="Alternar para a Visão Semanal Minimalista do Modo Calma"
+          >
+            <Leaf className="w-4 h-4 text-emerald-400" />
+            <span>Modo Calma</span>
+          </Link>
 
           <Link
             to="/calendar"

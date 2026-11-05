@@ -13,6 +13,7 @@ import {
   Wallet,
   Heart,
   Calculator,
+  Leaf,
   ArrowUpCircle,
   RefreshCw,
   Loader2
@@ -52,6 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
 
   const items = [
     { name: 'Início', path: '/', icon: Home },
+    { name: 'Modo Calma', path: '/calm', icon: Leaf, badge: 'Zen' },
     { name: 'Lançamentos', path: '/transactions', icon: DollarSign },
     { name: 'Calendário', path: '/calendar', icon: Calendar },
     { name: 'Contas', path: '/accounts', icon: Landmark },
@@ -95,8 +97,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
               }
               onClick={() => onSelect?.(item.path)}
             >
-              <item.icon className="w-5 h-5" />
-              <span className="ml-3">{item.name}</span>
+              <item.icon className="w-5 h-5 shrink-0" />
+              <span className="ml-3 truncate">{item.name}</span>
+              {item.badge && (
+                <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">
+                  {item.badge}
+                </span>
+              )}
             </NavLink>
           ))}
 

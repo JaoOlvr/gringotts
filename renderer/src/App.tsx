@@ -6,6 +6,7 @@ import { TransactionsPage } from './pages/transactions/TransactionsPage';
 import { AccountsPage } from './pages/accounts/AccountsPage';
 import { CategoriesPage } from './pages/categories/CategoriesPage';
 import { CalendarPage } from './pages/calendar/CalendarPage';
+import { CalmPage } from './pages/calm/CalmPage';
 import { OnboardingPage } from './pages/onboarding/OnboardingPage';
 import { AccountSelectScreen } from './pages/intro/AccountSelectScreen';
 import { useAccountStore } from './store/useAccountStore';
@@ -75,6 +76,7 @@ function App() {
           }
         >
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/calm" element={<CalmPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/accounts" element={<AccountsPage />} />
