@@ -95,7 +95,7 @@ export function evaluateWeekPacing(totalExpenseCents: number, totalIncomeCents: 
       type: 'serene',
       title: 'Semana Ultratranquila',
       description: 'Nenhuma saída registrada nesta semana. Uma pausa revigorante nas despesas.',
-      colorClass: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+      colorClass: 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20',
     };
   }
 
@@ -104,7 +104,7 @@ export function evaluateWeekPacing(totalExpenseCents: number, totalIncomeCents: 
       type: 'balanced',
       title: 'Fluxo em Harmonia',
       description: 'Entradas e saídas equilibradas nesta semana, mantendo a tranquilidade.',
-      colorClass: 'text-teal-400 bg-teal-500/10 border-teal-500/20',
+      colorClass: 'text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 border-teal-200 dark:border-teal-500/20',
     };
   }
 
@@ -113,7 +113,7 @@ export function evaluateWeekPacing(totalExpenseCents: number, totalIncomeCents: 
       type: 'balanced',
       title: 'Ritmo Confortável',
       description: 'Gastos moderados e controlados ao longo dos dias.',
-      colorClass: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+      colorClass: 'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20',
     };
   }
 
@@ -121,7 +121,7 @@ export function evaluateWeekPacing(totalExpenseCents: number, totalIncomeCents: 
     type: 'active',
     title: 'Semana Mais Movimentada',
     description: 'Algumas despesas concentradas nesta semana. Respire fundo e mantenha o foco no essencial.',
-    colorClass: 'text-indigo-300 bg-indigo-500/10 border-indigo-500/20',
+    colorClass: 'text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/20',
   };
 }
 

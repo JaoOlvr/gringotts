@@ -13,8 +13,6 @@ import {
   CheckCircle2, 
   Wallet, 
   Coffee,
-  RotateCcw,
-  Clock,
   Heart
 } from 'lucide-react';
 import { api } from '../../lib/ipc';
@@ -38,7 +36,6 @@ const STORAGE_KEY_HIDE_FIGURES = 'gringotts_calm_hide_figures';
 
 export const CalmPage: React.FC = () => {
   const queryClient = useQueryClient();
-  const accountsStore = useAccountStore((s) => s.accounts);
   const activeAccountId = useAccountStore((s) => s.selectedAccountId);
 
   // Navegação da semana
@@ -215,21 +212,21 @@ export const CalmPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090e] text-gray-100 flex flex-col p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto text-gray-900 dark:text-gray-100 transition-colors duration-150">
       {/* Cabeçalho Zen */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-gray-800/60">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600/30 via-teal-500/20 to-emerald-400/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-950/40">
+          <div className="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm shadow-emerald-500/10">
             <Leaf className="w-6 h-6 stroke-[2.2]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight text-white">Modo Calma</h1>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
+              <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Modo Calma</h1>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/20">
                 Visão Semanal
               </span>
             </div>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Sua semana com clareza, respiração e foco no essencial, sem sobrecarga de números.
             </p>
           </div>
@@ -238,51 +235,51 @@ export const CalmPage: React.FC = () => {
         {/* Controles da Barra Superior */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Seletor de Conta */}
-          <div className="flex items-center gap-2 bg-gray-900/80 border border-gray-800 rounded-xl px-3 py-1.5 text-xs">
-            <Wallet className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-1.5 text-xs shadow-2xs">
+            <Wallet className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
             <select
               value={selectedAccountId}
               onChange={(e) => setSelectedAccountId(e.target.value)}
-              className="bg-transparent text-gray-200 outline-none cursor-pointer text-xs pr-1"
+              className="bg-transparent text-gray-700 dark:text-gray-200 outline-none cursor-pointer text-xs pr-1"
             >
-              <option value="ALL" className="bg-gray-900 text-gray-200">Todas as Carteiras</option>
+              <option value="ALL" className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">Todas as Carteiras</option>
               {accounts.map((acc) => (
-                <option key={acc.id} value={acc.id} className="bg-gray-900 text-gray-200">
+                <option key={acc.id} value={acc.id} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
                   {acc.name}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* Botão de Toggle de Ocultar Cifras */}
+          {/* Botão de Toggle de Ocultar Cifras (Modo Zen) */}
           <button
             onClick={toggleHideFigures}
             className={cn(
-              "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all cursor-pointer",
+              "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all cursor-pointer shadow-2xs",
               hideFigures
-                ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-sm shadow-emerald-500/20"
-                : "bg-gray-900/80 text-gray-300 border-gray-800 hover:bg-gray-800"
+                ? "bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/30 font-semibold"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-750"
             )}
             title={hideFigures ? "Mostrar valores monetários" : "Ocultar valores para reduzir a ansiedade"}
           >
             {hideFigures ? (
               <>
-                <EyeOff className="w-3.5 h-3.5 text-emerald-400" />
+                <EyeOff className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>Cifras Ocultas (Zen)</span>
               </>
             ) : (
               <>
-                <Eye className="w-3.5 h-3.5 text-gray-400" />
+                <Eye className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                 <span>Ocultar Valores</span>
               </>
             )}
           </button>
 
           {/* Navegador de Semanas */}
-          <div className="flex items-center bg-gray-900/80 border border-gray-800 rounded-xl p-0.5">
+          <div className="flex items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-0.5 shadow-2xs">
             <button
               onClick={handlePrevWeek}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
               title="Semana anterior"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -293,15 +290,15 @@ export const CalmPage: React.FC = () => {
               className={cn(
                 "px-2.5 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer",
                 isCurrentWeek 
-                  ? "text-emerald-400 bg-emerald-500/10 cursor-default" 
-                  : "text-gray-300 hover:text-white hover:bg-gray-800"
+                  ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 font-bold cursor-default" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               )}
             >
               Esta Semana
             </button>
             <button
               onClick={handleNextWeek}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
               title="Semana seguinte"
             >
               <ChevronRight className="w-4 h-4" />
@@ -311,21 +308,21 @@ export const CalmPage: React.FC = () => {
       </header>
 
       {/* Banner de Diagnóstico e Serenidade */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-gray-900/90 via-gray-900/70 to-emerald-950/20 border border-gray-800/80 p-6 backdrop-blur-xl shadow-xl">
+      <section className="relative overflow-hidden rounded-3xl bg-white dark:bg-gradient-to-r dark:from-gray-900/90 dark:via-gray-900/70 dark:to-emerald-950/20 border border-gray-200 dark:border-gray-800 p-6 backdrop-blur-xl shadow-xs dark:shadow-xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1.5 max-w-2xl">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-medium text-amber-400/90 uppercase tracking-wider">
+              <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
                 {weekRangeLabel}
               </span>
-              <span className={cn("text-[11px] font-semibold px-2 py-0.5 rounded-full border", pacingInfo.colorClass)}>
+              <span className={cn("text-[11px] font-semibold px-2.5 py-0.5 rounded-full border", pacingInfo.colorClass)}>
                 {pacingInfo.title}
               </span>
             </div>
-            <h2 className="text-lg md:text-xl font-bold text-white tracking-tight">
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white tracking-tight">
               {pacingInfo.description}
             </h2>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-600 dark:text-gray-400">
               {zeroExpenseDaysCount === 7 
                 ? 'Uma semana inteira sem saídas até agora! Respire com tranquilidade.'
                 : `${zeroExpenseDaysCount} de 7 dias nesta semana foram dias de paz financeira (sem saídas registradas).`}
@@ -334,25 +331,25 @@ export const CalmPage: React.FC = () => {
 
           {/* Pílulas de Síntese Calma */}
           <div className="flex items-center gap-3 shrink-0">
-            <div className="px-4 py-2.5 rounded-2xl bg-gray-950/60 border border-gray-800/80 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/15 flex items-center justify-center text-emerald-400">
+            <div className="px-4 py-2.5 rounded-2xl bg-gray-50 dark:bg-gray-950/60 border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Dias de Paz</span>
-                <span className="text-base font-bold text-emerald-300 font-mono">
+                <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider block">Dias de Paz</span>
+                <span className="text-base font-bold text-emerald-700 dark:text-emerald-300 font-mono">
                   {zeroExpenseDaysCount} / 7
                 </span>
               </div>
             </div>
 
-            <div className="px-4 py-2.5 rounded-2xl bg-gray-950/60 border border-gray-800/80 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-400">
+            <div className="px-4 py-2.5 rounded-2xl bg-gray-50 dark:bg-gray-950/60 border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-500/15 flex items-center justify-center text-amber-600 dark:text-amber-400">
                 <Sparkles className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Lançamentos</span>
-                <span className="text-base font-bold text-gray-200 font-mono">
+                <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider block">Lançamentos</span>
+                <span className="text-base font-bold text-gray-800 dark:text-gray-200 font-mono">
                   {weekTransactions.length}
                 </span>
               </div>
@@ -360,18 +357,18 @@ export const CalmPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Glow decorativo de fundo */}
-        <div className="absolute top-0 right-1/4 w-96 h-28 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Glow decorativo de fundo no dark mode */}
+        <div className="absolute top-0 right-1/4 w-96 h-28 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none hidden dark:block" />
       </section>
 
       {/* Grade Semanal dos 7 Dias (Segunda a Domingo) */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-            <Leaf className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Leaf className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             Fluxo Diário da Semana
           </span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-400 dark:text-gray-500">
             Passe o mouse ou toque para adicionar rapidamente
           </span>
         </div>
@@ -392,32 +389,32 @@ export const CalmPage: React.FC = () => {
                 className={cn(
                   "group relative rounded-2xl p-3.5 flex flex-col justify-between transition-all duration-200 border min-h-[220px]",
                   isToday
-                    ? "bg-gradient-to-b from-gray-900 to-gray-950 border-emerald-500/40 shadow-lg shadow-emerald-500/5 ring-1 ring-emerald-500/20"
-                    : "bg-gray-900/60 border-gray-800/80 hover:border-gray-700/80 hover:bg-gray-900/80"
+                    ? "bg-emerald-50/40 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-950 border-emerald-400/80 dark:border-emerald-500/40 shadow-xs dark:shadow-lg dark:shadow-emerald-500/5 ring-1 ring-emerald-500/20"
+                    : "bg-white dark:bg-gray-900/60 border-gray-200 dark:border-gray-800/80 hover:border-gray-300 dark:hover:border-gray-700/80 hover:bg-gray-50/60 dark:hover:bg-gray-900/80 shadow-2xs"
                 )}
               >
                 {/* Cabeçalho do Dia */}
-                <div className="pb-2 mb-2 border-b border-gray-800/60 flex items-center justify-between">
+                <div className="pb-2 mb-2 border-b border-gray-100 dark:border-gray-800/60 flex items-center justify-between">
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-xs font-bold uppercase text-gray-400 tracking-wider">
+                    <span className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400 tracking-wider">
                       {weekdayName}
                     </span>
                     <span className={cn(
                       "text-base font-bold font-mono",
-                      isToday ? "text-emerald-400" : "text-gray-200"
+                      isToday ? "text-emerald-700 dark:text-emerald-400" : "text-gray-800 dark:text-gray-200"
                     )}>
                       {dayNum}
                     </span>
                   </div>
 
                   {isToday ? (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30">
                       Hoje
                     </span>
                   ) : (
                     <button
                       onClick={() => handleOpenAddForDay(dateStr)}
-                      className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-white rounded-md hover:bg-gray-800 transition-all cursor-pointer"
+                      className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
                       title={`Adicionar lançamento em ${dateStr}`}
                     >
                       <Plus className="w-3.5 h-3.5" />
@@ -436,21 +433,21 @@ export const CalmPage: React.FC = () => {
                         return (
                           <div
                             key={item.id}
-                            className="p-1.5 rounded-xl bg-gray-950/60 border border-gray-800/60 hover:border-gray-700/60 transition-colors text-xs flex items-center justify-between gap-1.5"
+                            className="p-1.5 rounded-xl bg-gray-50 dark:bg-gray-950/60 border border-gray-200/70 dark:border-gray-800/60 hover:border-gray-300 dark:hover:border-gray-700/60 transition-colors text-xs flex items-center justify-between gap-1.5"
                           >
                             <div className="flex items-center gap-1.5 min-w-0">
                               <span 
                                 className="w-1.5 h-1.5 rounded-full shrink-0" 
                                 style={{ backgroundColor: cat?.color || (isIncome ? '#10b981' : '#f59e0b') }} 
                               />
-                              <span className="truncate text-gray-300 text-[11px]" title={item.description || cat?.name || 'Sem descrição'}>
+                              <span className="truncate text-gray-700 dark:text-gray-300 text-[11px]" title={item.description || cat?.name || 'Sem descrição'}>
                                 {item.description || cat?.name || 'Lançamento'}
                               </span>
                             </div>
 
                             <span className={cn(
                               "font-mono text-[11px] font-semibold shrink-0",
-                              isIncome ? "text-emerald-400" : "text-gray-300"
+                              isIncome ? "text-emerald-600 dark:text-emerald-400" : "text-gray-800 dark:text-gray-300"
                             )}>
                               {isIncome ? '+' : '-'}{renderAmount(Math.abs(item.amountCents))}
                             </span>
@@ -460,20 +457,20 @@ export const CalmPage: React.FC = () => {
                     </div>
                   ) : (
                     /* Estado Zen: Dia de Paz sem gastos */
-                    <div className="my-auto py-4 flex flex-col items-center justify-center text-center text-gray-500 space-y-1 select-none">
-                      <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400/70 mb-1">
+                    <div className="my-auto py-4 flex flex-col items-center justify-center text-center space-y-1 select-none">
+                      <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400/70 mb-1">
                         <Leaf className="w-4 h-4" />
                       </div>
-                      <span className="text-xs font-medium text-emerald-300/80">Dia de Paz</span>
-                      <span className="text-[10px] text-gray-500">Sem saídas</span>
+                      <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300/80">Dia de Paz</span>
+                      <span className="text-[10px] text-gray-400 dark:text-gray-500">Sem saídas</span>
                     </div>
                   )}
 
                   {/* Resumo sutil do Dia */}
                   {hasExpense && (
-                    <div className="pt-2 border-t border-gray-800/40 flex items-center justify-between text-[11px]">
-                      <span className="text-gray-500">Total do dia:</span>
-                      <span className="font-mono text-gray-300 font-medium">
+                    <div className="pt-2 border-t border-gray-100 dark:border-gray-800/40 flex items-center justify-between text-[11px]">
+                      <span className="text-gray-400 dark:text-gray-500">Total do dia:</span>
+                      <span className="font-mono text-gray-800 dark:text-gray-300 font-medium">
                         {renderAmount(dayData.expenses)}
                       </span>
                     </div>
@@ -483,7 +480,7 @@ export const CalmPage: React.FC = () => {
                 {/* Botão de Adição Rápida Sempre Visível em Dispositivos Móveis */}
                 <button
                   onClick={() => handleOpenAddForDay(dateStr)}
-                  className="mt-2 w-full py-1 text-[11px] font-medium text-gray-400 hover:text-white rounded-lg hover:bg-gray-800/80 border border-transparent hover:border-gray-800 transition-all flex items-center justify-center gap-1 cursor-pointer sm:hidden"
+                  className="mt-2 w-full py-1 text-[11px] font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/80 border border-transparent hover:border-gray-200 dark:hover:border-gray-800 transition-all flex items-center justify-center gap-1 cursor-pointer sm:hidden"
                 >
                   <Plus className="w-3 h-3" />
                   <span>Lançar</span>
@@ -495,16 +492,16 @@ export const CalmPage: React.FC = () => {
       </section>
 
       {/* Rodapé Minimalista: Balanço da Semana e Dica Zen */}
-      <footer className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+      <footer className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
         {/* Entradas da Semana */}
-        <div className="p-4 rounded-2xl bg-gray-900/60 border border-gray-800/80 flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 flex items-center justify-between shadow-2xs">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center text-emerald-400">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
               <ArrowUpRight className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Entradas da Semana</span>
-              <span className="text-lg font-bold text-emerald-400 font-mono">
+              <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">Entradas da Semana</span>
+              <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400 font-mono">
                 {renderAmount(totalIncome)}
               </span>
             </div>
@@ -512,14 +509,14 @@ export const CalmPage: React.FC = () => {
         </div>
 
         {/* Saídas da Semana */}
-        <div className="p-4 rounded-2xl bg-gray-900/60 border border-gray-800/80 flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 flex items-center justify-between shadow-2xs">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-400">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/15 flex items-center justify-center text-amber-600 dark:text-amber-400">
               <ArrowDownRight className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Saídas da Semana</span>
-              <span className="text-lg font-bold text-gray-200 font-mono">
+              <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">Saídas da Semana</span>
+              <span className="text-lg font-bold text-gray-800 dark:text-gray-200 font-mono">
                 {renderAmount(totalExpense)}
               </span>
             </div>
@@ -527,16 +524,16 @@ export const CalmPage: React.FC = () => {
         </div>
 
         {/* Balanço / Saldo Semanal */}
-        <div className="p-4 rounded-2xl bg-gray-900/60 border border-gray-800/80 flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 flex items-center justify-between shadow-2xs">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/15 flex items-center justify-center text-indigo-400">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/15 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
               <Heart className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Saldo Semanal</span>
+              <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">Saldo Semanal</span>
               <span className={cn(
                 "text-lg font-bold font-mono",
-                balance >= 0 ? "text-emerald-400" : "text-amber-400"
+                balance >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
               )}>
                 {balance > 0 ? '+' : ''}{renderAmount(balance)}
               </span>
@@ -546,12 +543,12 @@ export const CalmPage: React.FC = () => {
       </footer>
 
       {/* Dica de Tranquilidade Financeira */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-gray-900/80 to-teal-500/10 border border-emerald-500/20 flex items-center gap-3.5 text-xs text-gray-300">
-        <div className="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+      <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-gradient-to-r dark:from-emerald-500/10 dark:via-gray-900/80 dark:to-teal-500/10 border border-emerald-200/80 dark:border-emerald-500/20 flex items-center gap-3.5 text-xs text-gray-700 dark:text-gray-300 shadow-2xs">
+        <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-700 dark:text-emerald-400 shrink-0">
           <Coffee className="w-4 h-4" />
         </div>
         <div className="flex-1">
-          <span className="font-bold text-emerald-300 mr-1.5">Pensamento Zen:</span>
+          <span className="font-bold text-emerald-800 dark:text-emerald-300 mr-1.5">Pensamento Zen:</span>
           <span>{currentTip}</span>
         </div>
       </div>
