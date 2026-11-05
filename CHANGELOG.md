@@ -5,6 +5,32 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [1.3.0] - 2026-11-05
+
+### 🚀 Novas Funcionalidades
+- **Modo Calma (Visão Semanal Minimalista sem Sobrecarga de Números)**:
+  - Foco na semana corrente (Segunda a Domingo) com destaque para o dia de hoje.
+  - Indicador sereno do ritmo de gastos semanais (*Semana Ultratranquila*, *Fluxo em Harmonia*, *Ritmo Confortável*, *Semana Mais Movimentada*).
+  - Contador de *Dias de Paz Financeira* (dias sem nenhuma despesa registrada na semana).
+  - *Modo Zen (Cifras Ocultas)* com alternância rápida (`●●●`) para reduzir a ansiedade financeira e sobrecarga cognitiva (preferência persistida no `localStorage`).
+  - Lançamento rápido direto no dia escolhido da semana através de botão de atalho `+`.
+  - Resumo sereno com balanço semanal e pílulas de pensamentos zen rotativos.
+  - Suporte completo aos modos Claro e Escuro com contrastes equilibrados.
+- **Sistema de Atualização Nativa em Segundo Plano (In-App Auto-Update)**:
+  - **Linux (AppImage in-place):** Atualização direta no mesmo arquivo (`process.env.APPIMAGE`) com permissão automática (`chmod 755`) e reinicialização, sem necessidade de baixar um novo AppImage pelo navegador nem apagar o antigo manualmente.
+  - **Windows (NSIS Installer):** Execução do instalador Setup e reinício automático do aplicativo.
+  - **Download com Streaming e Barra de Progresso:** Acompanhamento em tempo real no modal (porcentagem, MBs baixados e velocidade de download) e botão pulsante na barra lateral (`Sidebar`) que indica quando a atualização estiver pronta para reiniciar com 1 clique.
+  - Configuração oficial de publicação com `electron-builder` e upload de manifestos `latest*.yml` no GitHub Actions.
+
+### 🧹 Limpeza e Usabilidade
+- Remoção do banner de demonstração/seed da página inicial de primeiros passos (`OnboardingPage`).
+- Correção de priorização de instaladores no Windows para evitar o download acidental da versão portátil.
+
+### 🛡️ Confiabilidade e Testes
+- Adição de 18 novos testes unitários cobrindo o Modo Calma e o serviço de auto-update (totalizando **64 testes automatizados** passando com 100% de sucesso).
+
+---
+
 ## [1.2.0] - 2026-11-02
 
 ### 🚀 Novas Funcionalidades

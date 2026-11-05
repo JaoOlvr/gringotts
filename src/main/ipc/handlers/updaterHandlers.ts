@@ -15,7 +15,7 @@ export function registerUpdaterHandlers() {
   // Obter versão e plataforma do app
   ipcMain.handle('updater:getAppInfo', async () => {
     return {
-      version: app ? app.getVersion() : '1.2.0',
+      version: app ? app.getVersion() : '1.3.0',
       platform: process.platform,
       arch: process.arch,
       isAppImage: !!process.env.APPIMAGE,
