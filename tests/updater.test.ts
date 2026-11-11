@@ -33,6 +33,7 @@ describe('Updater Service - Testes Unitários', () => {
       expect(compareSemver('1.0.0', '1.1.0')).toBeGreaterThan(0);
       expect(compareSemver('1.1.0', '1.2.0')).toBeGreaterThan(0);
       expect(compareSemver('1.2.0', '1.3.0')).toBeGreaterThan(0);
+      expect(compareSemver('1.3.0', '1.3.1')).toBeGreaterThan(0);
       expect(compareSemver('1.0.0', '2.0.0')).toBeGreaterThan(0);
       expect(compareSemver('v1.0.0', 'v1.0.1')).toBeGreaterThan(0);
       expect(compareSemver('1.9.9', '1.10.0')).toBeGreaterThan(0);
@@ -42,7 +43,8 @@ describe('Updater Service - Testes Unitários', () => {
       expect(compareSemver('1.0.0', '1.0.0')).toBe(0);
       expect(compareSemver('1.2.0', '1.2.0')).toBe(0);
       expect(compareSemver('1.3.0', '1.3.0')).toBe(0);
-      expect(compareSemver('v1.3.0', '1.3.0')).toBe(0);
+      expect(compareSemver('1.3.1', '1.3.1')).toBe(0);
+      expect(compareSemver('v1.3.1', '1.3.1')).toBe(0);
       expect(compareSemver('1.0.0', 'v1.0.0')).toBe(0);
     });
 
@@ -50,6 +52,7 @@ describe('Updater Service - Testes Unitários', () => {
       expect(compareSemver('1.1.0', '1.0.0')).toBeLessThan(0);
       expect(compareSemver('1.2.0', '1.1.0')).toBeLessThan(0);
       expect(compareSemver('1.3.0', '1.2.0')).toBeLessThan(0);
+      expect(compareSemver('1.3.1', '1.3.0')).toBeLessThan(0);
       expect(compareSemver('2.0.0', '1.9.9')).toBeLessThan(0);
       expect(compareSemver('v1.0.5', 'v1.0.4')).toBeLessThan(0);
     });

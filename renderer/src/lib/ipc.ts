@@ -287,8 +287,8 @@ export const api = {
       if (isElectron) return window.api!.invoke('updater:check');
       return {
         hasUpdate: false,
-        currentVersion: '1.3.0',
-        latestVersion: '1.3.0',
+        currentVersion: '1.3.1',
+        latestVersion: '1.3.1',
         releaseName: 'Gringotts Local Preview',
         releaseNotes: '',
         releaseUrl: 'https://github.com/JaoOlvr/gringotts/releases',
@@ -302,7 +302,7 @@ export const api = {
     },
     getAppInfo: async (): Promise<{ version: string; platform: string; arch: string; isAppImage?: boolean }> => {
       if (isElectron) return window.api!.invoke('updater:getAppInfo');
-      return { version: '1.3.0', platform: 'linux', arch: 'x64', isAppImage: false };
+      return { version: '1.3.1', platform: 'linux', arch: 'x64', isAppImage: false };
     },
     startDownload: async (url?: string): Promise<{ success: boolean; filePath?: string; error?: string }> => {
       if (isElectron) return window.api!.invoke('updater:startDownload', url);

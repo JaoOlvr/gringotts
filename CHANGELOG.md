@@ -5,6 +5,16 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [1.3.1] - 2026-11-10
+
+### 🧪 Testes e Atualização Contínua
+- **Release de Teste de Atualização (Auto-Update Validation)**:
+  - Validação da esteira de CI/CD multiplataforma e publicação de artefatos com `latest*.yml`.
+  - Verificação de notificação automática de atualização para usuários na versão `v1.3.0`.
+  - Teste de download in-app com barra de progresso e reinício assistido.
+
+---
+
 ## [1.3.0] - 2026-11-05
 
 ### 🚀 Novas Funcionalidades
