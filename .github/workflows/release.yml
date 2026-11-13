@@ -86,9 +86,11 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - name: Aceitar Licenças do Android SDK
+      - name: Configurar Android SDK e Licenças
         run: |
-          yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          echo "sdk.dir=$ANDROID_HOME" > renderer/android/local.properties
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
 
       - name: Instalar dependências (Root)
         run: npm ci || npm install
@@ -112,7 +114,7 @@ jobs:
         run: |
           cd renderer/android
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --stacktrace --info
 
       - name: Organizar e Renomear APK
         run: |
