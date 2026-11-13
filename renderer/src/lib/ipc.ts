@@ -10,6 +10,8 @@ import type {
   Debt,
   ParsedReceipt,
   ReceiptDocumentType,
+  P2pSyncStatus,
+  SyncResultDetails,
 } from '../types';
 
 export type {
@@ -24,6 +26,8 @@ export type {
   Debt,
   ParsedReceipt,
   ReceiptDocumentType,
+  P2pSyncStatus,
+  SyncResultDetails,
 };
 
 export interface UpdateCheckResult {
@@ -406,6 +410,45 @@ export const api = {
     scanReceipt: async (imageInput: string): Promise<ParsedReceipt> => {
       if (isElectron) return window.api!.invoke('receipt:scanReceipt', { imageInput });
       throw new Error('OCR não disponível no modo navegador');
+    },
+  },
+
+  sync: {
+    getStatus: async (): Promise<P2pSyncStatus> => {
+      if (isElectron) return window.api!.invoke('sync:getStatus');
+      return {
+        isServerRunning: false,
+        port: null,
+        pairingCode: null,
+        ipAddresses: ['127.0.0.1'],
+        primaryIp: '127.0.0.1',
+        lastSyncResult: null,
+        lastSyncTimestamp: null,
+        connectedClientsCount: 0,
+        errorMessage: null,
+      };
+    },
+    startServer: async (preferredPort?: number): Promise<P2pSyncStatus> => {
+      if (isElectron) return window.api!.invoke('sync:startServer', { preferredPort });
+      throw new Error('Servidor P2P não suportado no navegador');
+    },
+    stopServer: async (): Promise<P2pSyncStatus> => {
+      if (isElectron) return window.api!.invoke('sync:stopServer');
+      return {
+        isServerRunning: false,
+        port: null,
+        pairingCode: null,
+        ipAddresses: ['127.0.0.1'],
+        primaryIp: '127.0.0.1',
+        lastSyncResult: null,
+        lastSyncTimestamp: null,
+        connectedClientsCount: 0,
+        errorMessage: null,
+      };
+    },
+    connectAndSync: async (params: { host: string; port: number; pairingCode: string }): Promise<SyncResultDetails> => {
+      if (isElectron) return window.api!.invoke('sync:connectAndSync', params);
+      throw new Error('Sincronização P2P não suportada no navegador');
     },
   },
 

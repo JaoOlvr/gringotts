@@ -10,6 +10,7 @@ import { registerThemeHandlers } from './handlers/themeHandlers';
 import { registerOpenFinanceHandlers } from './handlers/openFinanceHandlers';
 import { registerDebtsHandlers } from './handlers/debtsHandlers';
 import { registerReceiptHandlers } from './handlers/receiptHandlers';
+import { registerSyncHandlers } from './handlers/syncHandlers';
 
 export function registerAllHandlers() {
   registerAccountsHandlers();
@@ -24,4 +25,5 @@ export function registerAllHandlers() {
   registerOpenFinanceHandlers();
   registerDebtsHandlers();
   registerReceiptHandlers();
+  registerSyncHandlers();
 }

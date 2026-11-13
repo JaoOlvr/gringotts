@@ -29,6 +29,7 @@ import { useCalculatorStore } from '../../store/useCalculatorStore';
 import { useUpdaterStore } from '../../store/useUpdaterStore';
 import { useOpenFinanceStore } from '../../store/useOpenFinanceStore';
 import { useReceiptScannerStore } from '../../store/useReceiptScannerStore';
+import { useP2pSyncStore } from '../../store/useP2pSyncStore';
 import { GringottsLogo } from '../common/GringottsLogo';
 import { ThemeSelector } from '../common/ThemeSelector';
 
@@ -149,6 +150,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             <span className="ml-3">Escanear Nota</span>
             <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 uppercase">
               OCR
+            </span>
+          </button>
+
+          {/* Botão Sincronização P2P */}
+          <button
+            onClick={() => useP2pSyncStore.getState().openModal()}
+            className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750 transition duration-150 text-left w-full group"
+            title="Sincronização P2P ponta-a-ponta entre dispositivos sem armazenamento em nuvem externa"
+          >
+            <RefreshCw className="w-5 h-5 text-gray-500 group-hover:text-blue-500 transition-colors" />
+            <span className="ml-3">Sincronizar P2P</span>
+            <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 uppercase">
+              P2P
             </span>
           </button>
         </nav>

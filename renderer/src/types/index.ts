@@ -162,5 +162,55 @@ export interface ParsedReceipt {
   confidence: number;
 }
 
+export interface P2pSyncStatus {
+  isServerRunning: boolean;
+  port: number | null;
+  pairingCode: string | null;
+  ipAddresses: string[];
+  primaryIp: string | null;
+  lastSyncResult: {
+    success: boolean;
+    accountsMerged: number;
+    categoriesMerged: number;
+    transactionsMerged: number;
+    debtsMerged: number;
+    budgetsMerged: number;
+    goalsMerged: number;
+    totalMerged: number;
+  } | null;
+  lastSyncTimestamp: number | null;
+  connectedClientsCount: number;
+  errorMessage: string | null;
+}
+
+export interface SyncResultDetails {
+  success: boolean;
+  localMergeResult?: {
+    success: boolean;
+    accountsMerged: number;
+    categoriesMerged: number;
+    transactionsMerged: number;
+    debtsMerged: number;
+    budgetsMerged: number;
+    goalsMerged: number;
+    totalMerged: number;
+  };
+  remoteMergeResult?: {
+    success: boolean;
+    accountsMerged: number;
+    categoriesMerged: number;
+    transactionsMerged: number;
+    debtsMerged: number;
+    budgetsMerged: number;
+    goalsMerged: number;
+    totalMerged: number;
+  };
+  totalMerged: number;
+  peerDeviceName?: string;
+  timestamp: number;
+  error?: string;
+}
+
+
 
 

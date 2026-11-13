@@ -118,5 +118,5 @@ npm run dist
 - [x] **Leitura de Notas Fiscais e Comprovantes:** OCR local offline para preenchimento de lançamentos via fotos e imagens de cupons fiscais (NFC-e/SAT), comprovantes Pix e recibos de cartão.
 - [x] **Planejador de Dívidas:** Métodos Bola de Neve (*Snowball*) e Avalanche com simulação interativa de quitação acelerada, cálculo de aportes extras e projeção de economia de juros.
 - [x] **Modo Calma:** Visão semanal minimalista sem sobrecarga de números, com ritmo qualitativo da semana, contador de dias de paz financeira e modo zen (ocultar cifras).
-- [ ] **Sincronização P2P:** Sincronização ponta-a-ponta entre dispositivos sem armazenamento em nuvem externa.
+- [x] **Sincronização P2P:** Sincronização ponta-a-ponta entre dispositivos na rede local (Wi-Fi/LAN) com criptografia AES-256-GCM, pareamento via QR Code e código temporário, 100% livre de armazenamento em nuvem externa.
 # gringotts
