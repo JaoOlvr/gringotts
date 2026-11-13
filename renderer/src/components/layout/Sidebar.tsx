@@ -18,7 +18,8 @@ import {
   RefreshCw,
   Loader2,
   ArrowDownToLine,
-  ShieldAlert
+  ShieldAlert,
+  Camera
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTransactionStore } from '../../store/useTransactionStore';
@@ -27,6 +28,7 @@ import { useDonationStore } from '../../store/useDonationStore';
 import { useCalculatorStore } from '../../store/useCalculatorStore';
 import { useUpdaterStore } from '../../store/useUpdaterStore';
 import { useOpenFinanceStore } from '../../store/useOpenFinanceStore';
+import { useReceiptScannerStore } from '../../store/useReceiptScannerStore';
 import { GringottsLogo } from '../common/GringottsLogo';
 import { ThemeSelector } from '../common/ThemeSelector';
 
@@ -134,6 +136,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             <span className="ml-3">Importar Extrato</span>
             <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-500/20 uppercase">
               OFX
+            </span>
+          </button>
+
+          {/* Botão Escanear Comprovante OCR */}
+          <button
+            onClick={() => useReceiptScannerStore.getState().openModal()}
+            className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750 transition duration-150 text-left w-full group"
+            title="Escanear Nota Fiscal ou Comprovante Pix com OCR 100% Offline"
+          >
+            <Camera className="w-5 h-5 text-gray-500 group-hover:text-emerald-500 transition-colors" />
+            <span className="ml-3">Escanear Nota</span>
+            <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 uppercase">
+              OCR
             </span>
           </button>
         </nav>

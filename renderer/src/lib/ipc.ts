@@ -8,6 +8,8 @@ import type {
   ImportTransactionsParams,
   ImportTransactionsResult,
   Debt,
+  ParsedReceipt,
+  ReceiptDocumentType,
 } from '../types';
 
 export type {
@@ -20,6 +22,8 @@ export type {
   ImportTransactionsParams,
   ImportTransactionsResult,
   Debt,
+  ParsedReceipt,
+  ReceiptDocumentType,
 };
 
 export interface UpdateCheckResult {
@@ -391,6 +395,17 @@ export const api = {
     delete: async (id: string): Promise<boolean> => {
       if (isElectron) return window.api!.invoke('debts:delete', id);
       throw new Error('Não suportado no navegador');
+    },
+  },
+
+  receipt: {
+    selectFile: async (): Promise<{ canceled: boolean; filePath?: string; fileName?: string; fileBase64?: string }> => {
+      if (isElectron) return window.api!.invoke('receipt:selectFile');
+      return { canceled: true };
+    },
+    scanReceipt: async (imageInput: string): Promise<ParsedReceipt> => {
+      if (isElectron) return window.api!.invoke('receipt:scanReceipt', { imageInput });
+      throw new Error('OCR não disponível no modo navegador');
     },
   },
 

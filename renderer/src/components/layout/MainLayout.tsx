@@ -10,6 +10,7 @@ import { DonationModal } from '../donation/DonationModal';
 import { CalculatorModal } from '../calculator/CalculatorModal';
 import { UpdateModal } from '../updater/UpdateModal';
 import { OpenFinanceImportModal } from '../openfinance/OpenFinanceImportModal';
+import { ReceiptScannerModal } from '../receipts/ReceiptScannerModal';
 import { useDonationStore } from '../../store/useDonationStore';
 import { useUpdaterStore } from '../../store/useUpdaterStore';
 
@@ -78,6 +79,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <CalculatorModal />
       <UpdateModal />
       <OpenFinanceImportModal />
+      <ReceiptScannerModal />
     </div>
   );
 };

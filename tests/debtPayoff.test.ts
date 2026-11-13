@@ -111,3 +111,4 @@ describe('Planejador de Dívidas - Algoritmos Financeiros (Snowball & Avalanche)
     });
   });
 });
+

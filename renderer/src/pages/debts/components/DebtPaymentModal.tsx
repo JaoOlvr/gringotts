@@ -175,3 +175,4 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({ isOpen, onCl
     </div>
   );
 };
+

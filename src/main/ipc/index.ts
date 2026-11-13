@@ -9,6 +9,7 @@ import { registerUpdaterHandlers } from './handlers/updaterHandlers';
 import { registerThemeHandlers } from './handlers/themeHandlers';
 import { registerOpenFinanceHandlers } from './handlers/openFinanceHandlers';
 import { registerDebtsHandlers } from './handlers/debtsHandlers';
+import { registerReceiptHandlers } from './handlers/receiptHandlers';
 
 export function registerAllHandlers() {
   registerAccountsHandlers();
@@ -22,4 +23,5 @@ export function registerAllHandlers() {
   registerThemeHandlers();
   registerOpenFinanceHandlers();
   registerDebtsHandlers();
+  registerReceiptHandlers();
 }

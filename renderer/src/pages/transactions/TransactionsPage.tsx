@@ -4,8 +4,9 @@ import { api } from '../../lib/ipc';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { Button } from '../../components/ui/button';
 import { TransactionsTable } from './components/TransactionsTable';
-import { Plus, ReceiptText, Landmark, ArrowDownToLine } from 'lucide-react';
+import { Plus, ReceiptText, Landmark, ArrowDownToLine, Camera } from 'lucide-react';
 import { useOpenFinanceStore } from '../../store/useOpenFinanceStore';
+import { useReceiptScannerStore } from '../../store/useReceiptScannerStore';
 import type { Account } from '../../types';
 
 export const TransactionsPage: React.FC = () => {
@@ -136,6 +137,16 @@ export const TransactionsPage: React.FC = () => {
               </optgroup>
             </select>
           </div>
+
+          <Button 
+            variant="outline"
+            onClick={() => useReceiptScannerStore.getState().openModal()}
+            className="gap-2 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-emerald-400"
+            title="Escanear comprovante com OCR offline"
+          >
+            <Camera className="w-4 h-4 text-emerald-500" />
+            Escanear Nota
+          </Button>
 
           <Button 
             variant="outline"
