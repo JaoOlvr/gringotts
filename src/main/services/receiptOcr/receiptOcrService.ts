@@ -133,3 +133,4 @@ export class ReceiptOcrService {
 }
 
 export const receiptOcrService = new ReceiptOcrService();
+

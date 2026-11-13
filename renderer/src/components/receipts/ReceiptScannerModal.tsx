@@ -563,3 +563,4 @@ export const ReceiptScannerModal: React.FC = () => {
     </div>
   );
 };
+

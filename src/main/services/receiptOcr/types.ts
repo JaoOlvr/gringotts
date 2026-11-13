@@ -12,3 +12,4 @@ export interface ParsedReceipt {
   suggestedCategoryName?: string;
   confidence: number;
 }
+

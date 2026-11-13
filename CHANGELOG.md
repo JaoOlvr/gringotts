@@ -5,6 +5,42 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [1.4.0] - 2026-11-13
+
+### 🚀 Grandes Novas Funcionalidades
+
+- **Conexão com Extratos Bancários & Open Finance Brasil (100% Offline & Local)**:
+  - Suporte completo a extratos bancários nos formatos **OFX 1.x (SGML)** e **OFX 2.x (XML)** de todos os bancos brasileiros (*Nubank, Banco Inter, Itaú, Bradesco, Banco do Brasil, Santander, C6 Bank, Caixa, PicPay, etc.*).
+  - Suporte ao formato padrão **JSON do Open Finance Brasil** e exportações de agregadores de dados bancários abertos.
+  - Extração automatizada de código de compensação bancária (COMPE), número de conta, moeda e saldo informado.
+  - **Categorização Inteligente por Palavras-Chave**: Mecanismo inteligente que reconhece estabelecimentos do dia a dia brasileiro (*iFood, Uber, 99, Drogasil, Carrefour, Atacadão, Enel, Sabesp, Netflix, Salário, etc.*) e pré-associa à categoria correspondente do usuário.
+  - **Detecção Automática de Duplicidades**: Verificação dupla por identificador bancário (`FITID`) e por paridade de Data + Valor com alertas visuais para evitar lançamentos repetidos.
+  - Modal interativo de revisão em lote (`OpenFinanceImportModal`) com estatísticas de receitas e despesas, filtro de duplicadas e seleção flexível.
+  - Acessos rápidos no menu lateral, na tela de Lançamentos e nos cards individuais de cada conta.
+
+- **Planejador de Dívidas (*Snowball* & *Avalanche*)**:
+  - Módulo completo de gestão e plano de ataque para quitação acelerada de compromissos financeiros (empréstimos, financiamentos, faturas, cheque especial).
+  - **Método Bola de Neve (*Snowball*)**: Priorização das dívidas de menor saldo devedor primeiro para vitórias rápidas e liberação de fluxo de caixa.
+  - **Método Avalanche**: Priorização das dívidas com maiores taxas de juros primeiro para maximizar a economia financeira total.
+  - **Efeito Rollover (*Snowball Effect*)**: Conforme uma dívida é liquidada, o valor de sua parcela é automaticamente transferido para potencializar a amortização da próxima dívida da fila.
+  - **Simulador Interativo de Aportes Extras**: Slider e botões rápidos (+R$ 100, +R$ 250, +R$ 500, +R$ 1.000) calculando em tempo real o adiantamento da data de liberdade financeira (*Debt-Free Date*) e a economia projetada de juros.
+  - Comparativo direto entre as estratégias e seção comemorativa de dívidas 100% quitadas.
+  - Nova tela dedicada `/debts` com link direto no menu lateral (`Sidebar`).
+
+- **Leitura de Notas Fiscais e Comprovantes (OCR 100% Local & Privado)**:
+  - Extração óptica inteligente utilizando redes neurais locais do Tesseract embarcadas diretamente no app (`resources/tessdata`), sem qualquer envio de fotos ou dados para APIs na nuvem.
+  - Reconhecimento especializado para documentos fiscais e bancários brasileiros:
+    - Cupons Fiscais Eletrônicos (**NFC-e / SAT / Danfe**): Extração de Razão Social/Fantasia, CNPJ, data de emissão e valor total líquido.
+    - Comprovantes de Transferência **Pix e TED**: Extração de valor, data/hora e nome do favorecido/destinatário.
+    - Comprovantes de maquininhas de cartão (**Cielo, Rede, Stone, PagBank, Getnet**): Identificação do estabelecimento, modalidade (débito/crédito) e valor.
+  - Modal com pré-visualização lado a lado (`ReceiptScannerModal`), permitindo conferir a foto e os campos lidos antes de salvar a transação com um único clique.
+  - Atalhos no menu lateral e botão *"Escanear Nota"* na tela de lançamentos.
+
+### 🧪 Testes e Qualidade
+- Expansão da suíte de testes com 25 novos testes cobrindo parsers OFX/Open Finance, algoritmos de dívidas e OCR, totalizando **89 testes automatizados com 100% de aprovação**.
+
+---
+
 ## [1.3.1] - 2026-11-10
 
 ### 🧪 Testes e Atualização Contínua

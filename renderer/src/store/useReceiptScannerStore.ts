@@ -11,3 +11,4 @@ export const useReceiptScannerStore = create<ReceiptScannerState>((set) => ({
   openModal: () => set({ isOpen: true }),
   closeModal: () => set({ isOpen: false }),
 }));
+
