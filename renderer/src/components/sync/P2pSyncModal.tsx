@@ -523,3 +523,4 @@ export const P2pSyncModal: React.FC = () => {
     </div>
   );
 };
+

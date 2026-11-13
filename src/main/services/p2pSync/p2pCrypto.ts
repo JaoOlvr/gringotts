@@ -5,6 +5,7 @@ export interface EncryptedSyncEnvelope {
   iv: string; // Base64
   authTag: string; // Base64
   ciphertext: string; // Base64
+  kdf?: 'pbkdf2' | 'scrypt';
 }
 
 /**
@@ -26,12 +27,19 @@ export function normalizePairingCode(code: string): string {
 /**
  * Criptografa um objeto ou string usando AES-256-GCM com chave derivada do código de pareamento
  */
-export function encryptPayload(data: unknown, pairingCode: string): EncryptedSyncEnvelope {
+export function encryptPayload(
+  data: unknown,
+  pairingCode: string,
+  kdf: 'pbkdf2' | 'scrypt' = 'pbkdf2'
+): EncryptedSyncEnvelope {
   const normalizedKey = normalizePairingCode(pairingCode);
   const salt = crypto.randomBytes(16);
   const iv = crypto.randomBytes(12); // Padrão GCM: 12 bytes
 
-  const key = crypto.scryptSync(normalizedKey, salt, 32);
+  const key = kdf === 'scrypt'
+    ? crypto.scryptSync(normalizedKey, salt, 32)
+    : crypto.pbkdf2Sync(normalizedKey, salt, 100000, 32, 'sha256');
+
   const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
 
   const plaintext = typeof data === 'string' ? data : JSON.stringify(data);
@@ -43,6 +51,7 @@ export function encryptPayload(data: unknown, pairingCode: string): EncryptedSyn
     iv: iv.toString('base64'),
     authTag: authTag.toString('base64'),
     ciphertext: ciphertextBuffer.toString('base64'),
+    kdf,
   };
 }
 
@@ -56,7 +65,10 @@ export function decryptPayload<T = any>(envelope: EncryptedSyncEnvelope, pairing
   const authTag = Buffer.from(envelope.authTag, 'base64');
   const ciphertext = Buffer.from(envelope.ciphertext, 'base64');
 
-  const key = crypto.scryptSync(normalizedKey, salt, 32);
+  const key = envelope.kdf === 'scrypt'
+    ? crypto.scryptSync(normalizedKey, salt, 32)
+    : crypto.pbkdf2Sync(normalizedKey, salt, 100000, 32, 'sha256');
+
   const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
   decipher.setAuthTag(authTag);
 
@@ -69,3 +81,4 @@ export function decryptPayload<T = any>(envelope: EncryptedSyncEnvelope, pairing
     return plaintext as unknown as T;
   }
 }
+

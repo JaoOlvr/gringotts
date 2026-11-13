@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import { MobileNav } from './MobileNav';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { useAccountStore } from '../../store/useAccountStore';
 import { useQueryClient } from '@tanstack/react-query';
@@ -64,9 +65,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div className="flex h-screen w-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 pb-16 md:pb-0">
         {children ?? <Outlet />}
       </main>
+
+      <MobileNav />
 
       <QuickAddTransactionModal
         isOpen={quickAddOpen}

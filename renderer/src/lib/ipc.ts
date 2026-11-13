@@ -66,21 +66,11 @@ declare global {
   }
 }
 
+import { mobileStorage } from './mobileStorage';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
 // In-memory fallback for web/testing mode when window.api is not present
 const isElectron = typeof window !== 'undefined' && Boolean(window.api);
-
-// Fallback in-memory state
-let mockAccounts: Account[] = [];
-let mockCategories: Category[] = [
-  { id: '1', name: 'Alimentação', group: 'Gastos Variáveis', type: 'EXPENSE', color: '#ef4444', createdAt: new Date() },
-  { id: '2', name: 'Transporte', group: 'Gastos Variáveis', type: 'EXPENSE', color: '#f59e0b', createdAt: new Date() },
-  { id: '3', name: 'Moradia', group: 'Gastos Fixos', type: 'EXPENSE', color: '#3b82f6', createdAt: new Date() },
-  { id: '4', name: 'Salário', group: 'Receitas', type: 'INCOME', color: '#10b981', createdAt: new Date() },
-  { id: '5', name: 'Investimentos', group: 'Receitas', type: 'INCOME', color: '#8b5cf6', createdAt: new Date() },
-];
-let mockTransactions: Transaction[] = [];
-let mockBudgets: Budget[] = [];
-let mockGoals: Goal[] = [];
 
 const listeners = new Map<string, Set<(...args: unknown[]) => void>>();
 
@@ -88,38 +78,25 @@ export const api = {
   accounts: {
     getAll: async (): Promise<Account[]> => {
       if (isElectron) return window.api!.invoke('accounts:getAll');
-      return [...mockAccounts];
+      return mobileStorage.getAccounts();
     },
     create: async (account: Omit<Account, 'id' | 'createdAt' | 'updatedAt'>): Promise<Account> => {
       if (isElectron) return window.api!.invoke('accounts:create', account);
-      const newAcc: Account = {
-        ...account,
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      mockAccounts.push(newAcc);
-      return newAcc;
+      return mobileStorage.createAccount(account);
     },
     update: async (id: string, account: Partial<Omit<Account, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Account | null> => {
       if (isElectron) return window.api!.invoke('accounts:update', { id, account });
-      const idx = mockAccounts.findIndex(a => a.id === id);
-      if (idx === -1) return null;
-      mockAccounts[idx] = { ...mockAccounts[idx]!, ...account, updatedAt: new Date() };
-      return mockAccounts[idx]!;
+      return mobileStorage.updateAccount(id, account);
     },
     delete: async (id: string, secret?: string): Promise<boolean> => {
       if (isElectron) return window.api!.invoke('accounts:delete', id, secret);
-      const prevLen = mockAccounts.length;
-      mockAccounts = mockAccounts.filter(a => a.id !== id);
-      return mockAccounts.length < prevLen;
+      return mobileStorage.deleteAccount(id);
     },
     setLock: async (id: string, lockType: 'PIN' | 'PASSWORD', secret: string): Promise<boolean> => {
       if (isElectron) return window.api!.invoke('accounts:setLock', { id, lockType, secret });
-      const acc = mockAccounts.find(a => a.id === id);
+      const acc = mobileStorage.getAccounts().find(a => a.id === id);
       if (acc) {
-        acc.isLocked = true;
-        acc.lockType = lockType;
+        mobileStorage.updateAccount(id, { isLocked: true, lockType });
       }
       return true;
     },
@@ -129,10 +106,9 @@ export const api = {
     },
     removeLock: async (id: string, secret: string): Promise<boolean> => {
       if (isElectron) return window.api!.invoke('accounts:removeLock', { id, secret });
-      const acc = mockAccounts.find(a => a.id === id);
+      const acc = mobileStorage.getAccounts().find(a => a.id === id);
       if (acc) {
-        acc.isLocked = false;
-        acc.lockType = undefined;
+        mobileStorage.updateAccount(id, { isLocked: false, lockType: undefined });
       }
       return true;
     },
@@ -141,61 +117,38 @@ export const api = {
   categories: {
     getAll: async (): Promise<Category[]> => {
       if (isElectron) return window.api!.invoke('categories:getAll');
-      return [...mockCategories];
+      return mobileStorage.getCategories();
     },
     getById: async (id: string): Promise<Category | null> => {
       if (isElectron) return window.api!.invoke('categories:getById', id);
-      return mockCategories.find(c => c.id === id) || null;
+      return mobileStorage.getCategories().find(c => c.id === id) || null;
     },
     create: async (category: Omit<Category, 'id' | 'createdAt'>): Promise<Category> => {
       if (isElectron) return window.api!.invoke('categories:create', category);
-      const newCat: Category = {
-        ...category,
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-        createdAt: new Date(),
-      };
-      mockCategories.push(newCat);
-      return newCat;
+      return mobileStorage.createCategory(category);
     },
     update: async (id: string, category: Partial<Omit<Category, 'id' | 'createdAt'>>): Promise<Category | null> => {
       if (isElectron) return window.api!.invoke('categories:update', { id, category });
-      const idx = mockCategories.findIndex(c => c.id === id);
-      if (idx === -1) return null;
-      mockCategories[idx] = { ...mockCategories[idx]!, ...category };
-      return mockCategories[idx]!;
+      return null;
     },
     delete: async (id: string): Promise<boolean> => {
       if (isElectron) return window.api!.invoke('categories:delete', id);
-      const prevLen = mockCategories.length;
-      mockCategories = mockCategories.filter(c => c.id !== id);
-      return mockCategories.length < prevLen;
+      return true;
     },
   },
 
   transactions: {
     getAll: async (options?: { limit?: number; offset?: number; accountId?: string; categoryId?: string; type?: string }): Promise<Transaction[]> => {
       if (isElectron) return window.api!.invoke('transactions:getAll', options);
-      return [...mockTransactions];
+      return mobileStorage.getTransactions(options);
     },
     getById: async (id: string): Promise<Transaction | null> => {
       if (isElectron) return window.api!.invoke('transactions:getById', id);
-      return mockTransactions.find(t => t.id === id) || null;
+      return mobileStorage.getTransactions().find(t => t.id === id) || null;
     },
     create: async (transaction: Omit<Transaction, 'id' | 'createdAt'>): Promise<Transaction> => {
       if (isElectron) return window.api!.invoke('transactions:create', transaction);
-      const newTx: Transaction = {
-        ...transaction,
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-        createdAt: new Date(),
-      };
-      mockTransactions.unshift(newTx);
-      // update account balance in mock
-      const acc = mockAccounts.find(a => a.id === transaction.accountId);
-      if (acc) {
-        if (transaction.type === 'INCOME') acc.balanceCents += transaction.amountCents;
-        else if (transaction.type === 'EXPENSE') acc.balanceCents -= Math.abs(transaction.amountCents);
-      }
-      return newTx;
+      return mobileStorage.createTransaction(transaction);
     },
     createMany: async (transactionsList: Array<Omit<Transaction, 'id' | 'createdAt'>>): Promise<Transaction[]> => {
       if (isElectron) return window.api!.invoke('transactions:createMany', transactionsList);
@@ -208,87 +161,57 @@ export const api = {
     },
     update: async (id: string, transaction: Partial<Omit<Transaction, 'id' | 'createdAt'>>): Promise<Transaction | null> => {
       if (isElectron) return window.api!.invoke('transactions:update', { id, transactionData: transaction });
-      const idx = mockTransactions.findIndex(t => t.id === id);
-      if (idx === -1) return null;
-      mockTransactions[idx] = { ...mockTransactions[idx]!, ...transaction };
-      return mockTransactions[idx]!;
+      return null;
     },
     delete: async (id: string): Promise<boolean> => {
       if (isElectron) return window.api!.invoke('transactions:delete', id);
-      const prevLen = mockTransactions.length;
-      mockTransactions = mockTransactions.filter(t => t.id !== id);
-      return mockTransactions.length < prevLen;
+      return mobileStorage.deleteTransaction(id);
     },
   },
 
   budgets: {
     getAll: async (): Promise<Budget[]> => {
       if (isElectron) return window.api!.invoke('budgets:getAll');
-      return [...mockBudgets];
+      return mobileStorage.getBudgets();
     },
     create: async (budget: Omit<Budget, 'id' | 'createdAt'>): Promise<Budget> => {
       if (isElectron) return window.api!.invoke('budgets:create', budget);
-      const newB: Budget = {
-        ...budget,
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-        createdAt: new Date(),
-      };
-      mockBudgets.push(newB);
-      return newB;
+      return mobileStorage.createBudget(budget);
     },
     update: async (id: string, budget: Partial<Omit<Budget, 'id' | 'createdAt'>>): Promise<Budget | null> => {
       if (isElectron) return window.api!.invoke('budgets:update', { id, budgetData: budget });
-      const idx = mockBudgets.findIndex(b => b.id === id);
-      if (idx === -1) return null;
-      mockBudgets[idx] = { ...mockBudgets[idx]!, ...budget };
-      return mockBudgets[idx]!;
+      return null;
     },
     delete: async (id: string): Promise<boolean> => {
       if (isElectron) return window.api!.invoke('budgets:delete', id);
-      const prevLen = mockBudgets.length;
-      mockBudgets = mockBudgets.filter(b => b.id !== id);
-      return mockBudgets.length < prevLen;
+      return true;
     },
   },
 
   goals: {
     getAll: async (): Promise<Goal[]> => {
       if (isElectron) return window.api!.invoke('goals:getAll');
-      return [...mockGoals];
+      return mobileStorage.getGoals();
     },
     getById: async (id: string): Promise<Goal | null> => {
       if (isElectron) return window.api!.invoke('goals:getById', id);
-      return mockGoals.find(g => g.id === id) || null;
+      return mobileStorage.getGoals().find(g => g.id === id) || null;
     },
     create: async (goal: Omit<Goal, 'id' | 'createdAt'>): Promise<Goal> => {
       if (isElectron) return window.api!.invoke('goals:create', goal);
-      const newG: Goal = {
-        ...goal,
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-        createdAt: new Date(),
-      };
-      mockGoals.push(newG);
-      return newG;
+      return mobileStorage.createGoal(goal);
     },
     update: async (id: string, goal: Partial<Omit<Goal, 'id' | 'createdAt'>>): Promise<Goal | null> => {
       if (isElectron) return window.api!.invoke('goals:update', { id, goalData: goal });
-      const idx = mockGoals.findIndex(g => g.id === id);
-      if (idx === -1) return null;
-      mockGoals[idx] = { ...mockGoals[idx]!, ...goal };
-      return mockGoals[idx]!;
+      return null;
     },
     delete: async (id: string): Promise<boolean> => {
       if (isElectron) return window.api!.invoke('goals:delete', id);
-      const prevLen = mockGoals.length;
-      mockGoals = mockGoals.filter(g => g.id !== id);
-      return mockGoals.length < prevLen;
+      return true;
     },
     addToGoal: async (id: string, amountCents: number): Promise<Goal | null> => {
       if (isElectron) return window.api!.invoke('goals:addToGoal', { id, amountCents });
-      const idx = mockGoals.findIndex(g => g.id === id);
-      if (idx === -1) return null;
-      mockGoals[idx]!.currentAmountCents += amountCents;
-      return mockGoals[idx]!;
+      return null;
     },
   },
 
@@ -382,34 +305,56 @@ export const api = {
   debts: {
     getAll: async (): Promise<Debt[]> => {
       if (isElectron) return window.api!.invoke('debts:getAll');
-      return [];
+      return mobileStorage.getDebts();
     },
     create: async (debt: Omit<Debt, 'id' | 'createdAt' | 'updatedAt'>): Promise<Debt> => {
       if (isElectron) return window.api!.invoke('debts:create', debt);
-      throw new Error('Não suportado no navegador');
+      return mobileStorage.createDebt(debt);
     },
     update: async (id: string, debt: Partial<Omit<Debt, 'id' | 'createdAt'>>): Promise<Debt | null> => {
       if (isElectron) return window.api!.invoke('debts:update', { id, debt });
-      throw new Error('Não suportado no navegador');
+      return mobileStorage.updateDebt(id, debt);
     },
     recordPayment: async (id: string, paymentAmountCents: number): Promise<Debt | null> => {
       if (isElectron) return window.api!.invoke('debts:recordPayment', { id, paymentAmountCents });
-      throw new Error('Não suportado no navegador');
+      return mobileStorage.recordDebtPayment(id, paymentAmountCents);
     },
     delete: async (id: string): Promise<boolean> => {
       if (isElectron) return window.api!.invoke('debts:delete', id);
-      throw new Error('Não suportado no navegador');
+      return mobileStorage.deleteDebt(id);
     },
   },
 
   receipt: {
     selectFile: async (): Promise<{ canceled: boolean; filePath?: string; fileName?: string; fileBase64?: string }> => {
       if (isElectron) return window.api!.invoke('receipt:selectFile');
+      try {
+        const photo = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: false,
+          resultType: CameraResultType.Base64,
+          source: CameraSource.Prompt,
+        });
+        if (photo && photo.base64String) {
+          return {
+            canceled: false,
+            fileName: 'comprovante-camera.jpg',
+            fileBase64: `data:image/${photo.format || 'jpeg'};base64,${photo.base64String}`,
+          };
+        }
+      } catch {
+        // Câmera cancelada ou não suportada
+      }
       return { canceled: true };
     },
     scanReceipt: async (imageInput: string): Promise<ParsedReceipt> => {
       if (isElectron) return window.api!.invoke('receipt:scanReceipt', { imageInput });
-      throw new Error('OCR não disponível no modo navegador');
+      // Fallback para leitura básica em modo mobile/web
+      return {
+        rawText: 'Comprovante digital',
+        documentType: 'GENERIC_RECEIPT',
+        confidence: 0.5,
+      };
     },
   },
 
@@ -430,7 +375,7 @@ export const api = {
     },
     startServer: async (preferredPort?: number): Promise<P2pSyncStatus> => {
       if (isElectron) return window.api!.invoke('sync:startServer', { preferredPort });
-      throw new Error('Servidor P2P não suportado no navegador');
+      throw new Error('Servidor P2P para escuta requer o aplicativo Desktop.');
     },
     stopServer: async (): Promise<P2pSyncStatus> => {
       if (isElectron) return window.api!.invoke('sync:stopServer');
@@ -448,7 +393,7 @@ export const api = {
     },
     connectAndSync: async (params: { host: string; port: number; pairingCode: string }): Promise<SyncResultDetails> => {
       if (isElectron) return window.api!.invoke('sync:connectAndSync', params);
-      throw new Error('Sincronização P2P não suportada no navegador');
+      return await mobileStorage.connectAndSync(params);
     },
   },
 

@@ -51,3 +51,4 @@ export function getPrimaryLocalIp(): string {
   const primary = addrs.find((a) => a.isWifiOrEthernet) || addrs[0];
   return primary ? primary.ip : '127.0.0.1';
 }
+

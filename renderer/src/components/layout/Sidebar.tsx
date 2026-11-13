@@ -68,7 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   ];
 
   return (
-    <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col justify-between shrink-0">
+    <aside className="w-64 hidden md:flex bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-col justify-between shrink-0">
       <div className="p-4">
         <div className="flex items-center space-x-3 mb-6">
           <GringottsLogo className="w-9 h-9 rounded-xl shadow-md shadow-amber-500/20 shrink-0" />
