@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import Database from 'better-sqlite3';
-import { accounts, categories, transactions, transfers, recurrences, budgets, goals, creditCardBills } from './schema';
+import { accounts, categories, transactions, transfers, recurrences, budgets, goals, creditCardBills, debts } from './schema';
 import { eq } from 'drizzle-orm';
 import path from 'node:path';
 import { app } from 'electron';
@@ -114,6 +114,23 @@ export function runMigrations() {
         is_closed INTEGER NOT NULL DEFAULT 0,
         created_at INTEGER NOT NULL
       );
+
+      CREATE TABLE IF NOT EXISTS debts (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        creditor TEXT,
+        total_amount_cents INTEGER NOT NULL,
+        remaining_amount_cents INTEGER NOT NULL,
+        interest_rate_monthly REAL NOT NULL DEFAULT 0,
+        minimum_payment_cents INTEGER NOT NULL DEFAULT 0,
+        due_day INTEGER,
+        category_id TEXT,
+        color TEXT,
+        notes TEXT,
+        is_paid INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      );
     `);
     console.log('Database tables verified / created successfully');
 
@@ -181,5 +198,6 @@ export {
   budgets,
   goals,
   creditCardBills,
+  debts,
   eq,
 };

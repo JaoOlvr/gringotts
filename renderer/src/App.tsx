@@ -7,6 +7,7 @@ import { AccountsPage } from './pages/accounts/AccountsPage';
 import { CategoriesPage } from './pages/categories/CategoriesPage';
 import { CalendarPage } from './pages/calendar/CalendarPage';
 import { CalmPage } from './pages/calm/CalmPage';
+import { DebtsPage } from './pages/debts/DebtsPage';
 import { OnboardingPage } from './pages/onboarding/OnboardingPage';
 import { AccountSelectScreen } from './pages/intro/AccountSelectScreen';
 import { useAccountStore } from './store/useAccountStore';
@@ -79,6 +80,7 @@ function App() {
           <Route path="/calm" element={<CalmPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/debts" element={<DebtsPage />} />
           <Route path="/accounts" element={<AccountsPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
         </Route>

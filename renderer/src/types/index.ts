@@ -130,3 +130,21 @@ export interface ImportTransactionsResult {
   newAccountBalanceCents?: number;
 }
 
+export interface Debt {
+  id: string;
+  name: string;
+  creditor?: string;
+  totalAmountCents: number;
+  remainingAmountCents: number;
+  interestRateMonthly: number; // Taxa mensal em % (ex: 2.5)
+  minimumPaymentCents: number;
+  dueDay?: number;
+  categoryId?: string;
+  color?: string;
+  notes?: string;
+  isPaid: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+

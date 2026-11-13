@@ -216,3 +216,4 @@ export function parseOfx(ofxContent: string): ParsedStatement {
     statementType: 'OFX',
   };
 }
+

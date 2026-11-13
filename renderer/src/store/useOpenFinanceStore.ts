@@ -13,3 +13,4 @@ export const useOpenFinanceStore = create<OpenFinanceState>((set) => ({
   openModal: (targetAccountId?: string) => set({ isOpen: true, targetAccountId }),
   closeModal: () => set({ isOpen: false, targetAccountId: undefined }),
 }));
+

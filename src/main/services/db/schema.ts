@@ -2,6 +2,7 @@ import {
   sqliteTable, 
   text, 
   integer, 
+  real,
 } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 
@@ -104,6 +105,24 @@ export const creditCardBills = sqliteTable('creditCardBills', {
   due_date: integer('due_date', { mode: 'timestamp' }).notNull(),
   is_closed: integer('is_closed', { mode: 'boolean' }).notNull().default(false),
   created_at: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+});
+
+// Debts table
+export const debts = sqliteTable('debts', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  creditor: text('creditor'),
+  total_amount_cents: integer('total_amount_cents').notNull(),
+  remaining_amount_cents: integer('remaining_amount_cents').notNull(),
+  interest_rate_monthly: real('interest_rate_monthly').notNull().default(0),
+  minimum_payment_cents: integer('minimum_payment_cents').notNull().default(0),
+  due_day: integer('due_day'),
+  category_id: text('category_id'),
+  color: text('color'),
+  notes: text('notes'),
+  is_paid: integer('is_paid', { mode: 'boolean' }).notNull().default(false),
+  created_at: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  updated_at: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 });
 
 // Relations

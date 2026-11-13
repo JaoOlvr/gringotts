@@ -17,7 +17,8 @@ import {
   ArrowUpCircle,
   RefreshCw,
   Loader2,
-  ArrowDownToLine
+  ArrowDownToLine,
+  ShieldAlert
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTransactionStore } from '../../store/useTransactionStore';
@@ -58,6 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     { name: 'Modo Calma', path: '/calm', icon: Leaf, badge: 'Zen' },
     { name: 'Lançamentos', path: '/transactions', icon: DollarSign },
     { name: 'Calendário', path: '/calendar', icon: Calendar },
+    { name: 'Dívidas', path: '/debts', icon: ShieldAlert },
     { name: 'Contas', path: '/accounts', icon: Landmark },
     { name: 'Categorias', path: '/categories', icon: Tag },
   ];

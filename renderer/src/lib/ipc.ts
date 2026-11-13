@@ -7,6 +7,7 @@ import type {
   ParsedStatement,
   ImportTransactionsParams,
   ImportTransactionsResult,
+  Debt,
 } from '../types';
 
 export type {
@@ -18,6 +19,7 @@ export type {
   ParsedStatement,
   ImportTransactionsParams,
   ImportTransactionsResult,
+  Debt,
 };
 
 export interface UpdateCheckResult {
@@ -366,6 +368,29 @@ export const api = {
     importTransactions: async (params: ImportTransactionsParams): Promise<ImportTransactionsResult> => {
       if (isElectron) return window.api!.invoke('openFinance:importTransactions', params);
       throw new Error('Open Finance indisponível no modo navegador');
+    },
+  },
+
+  debts: {
+    getAll: async (): Promise<Debt[]> => {
+      if (isElectron) return window.api!.invoke('debts:getAll');
+      return [];
+    },
+    create: async (debt: Omit<Debt, 'id' | 'createdAt' | 'updatedAt'>): Promise<Debt> => {
+      if (isElectron) return window.api!.invoke('debts:create', debt);
+      throw new Error('Não suportado no navegador');
+    },
+    update: async (id: string, debt: Partial<Omit<Debt, 'id' | 'createdAt'>>): Promise<Debt | null> => {
+      if (isElectron) return window.api!.invoke('debts:update', { id, debt });
+      throw new Error('Não suportado no navegador');
+    },
+    recordPayment: async (id: string, paymentAmountCents: number): Promise<Debt | null> => {
+      if (isElectron) return window.api!.invoke('debts:recordPayment', { id, paymentAmountCents });
+      throw new Error('Não suportado no navegador');
+    },
+    delete: async (id: string): Promise<boolean> => {
+      if (isElectron) return window.api!.invoke('debts:delete', id);
+      throw new Error('Não suportado no navegador');
     },
   },
 

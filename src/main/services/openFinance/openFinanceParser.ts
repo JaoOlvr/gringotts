@@ -101,3 +101,4 @@ export function parseOpenFinanceJson(jsonString: string): ParsedStatement {
     statementType: 'OPEN_FINANCE_JSON',
   };
 }
+

@@ -8,6 +8,7 @@ import { registerSeedHandlers } from './handlers/seedHandlers';
 import { registerUpdaterHandlers } from './handlers/updaterHandlers';
 import { registerThemeHandlers } from './handlers/themeHandlers';
 import { registerOpenFinanceHandlers } from './handlers/openFinanceHandlers';
+import { registerDebtsHandlers } from './handlers/debtsHandlers';
 
 export function registerAllHandlers() {
   registerAccountsHandlers();
@@ -20,4 +21,5 @@ export function registerAllHandlers() {
   registerUpdaterHandlers();
   registerThemeHandlers();
   registerOpenFinanceHandlers();
+  registerDebtsHandlers();
 }

@@ -1,0 +1,29 @@
+{
+  "brandName": "Open Finance Brasil - Banco Digital",
+  "accountNumber": "12345-X",
+  "currency": "BRL",
+  "transactions": [
+    {
+      "transactionId": "of-br-2026-001",
+      "transactionDate": "2026-11-08T15:20:00Z",
+      "amount": -119.90,
+      "type": "DEBIT",
+      "description": "MERCADO LIVRE COMPRAS"
+    },
+    {
+      "transactionId": "of-br-2026-002",
+      "transactionDate": "2026-11-10T18:45:00Z",
+      "amount": -19.50,
+      "type": "DEBIT",
+      "description": "99 POP VIAGEM URBANA"
+    },
+    {
+      "transactionId": "of-br-2026-003",
+      "transactionDate": "2026-11-12T11:00:00Z",
+      "amount": 1250.00,
+      "type": "CREDIT",
+      "description": "TRANSFERENCIA PIX FREELANCE DESIGN"
+    }
+  ]
+}
+
