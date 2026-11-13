@@ -114,7 +114,7 @@ npm run dist
 
 ## 🗺️ Roadmap Futuro
 
-- [ ] **Open Finance Brasil:** Conexão direta com extratos bancários via OFX e Open Finance.
+- [x] **Open Finance Brasil:** Importação e conciliação de extratos bancários via OFX (SGML/XML de todos os bancos brasileiros) e Open Finance JSON, 100% local e privado, com categorização inteligente por palavras-chave e detecção automática de duplicidades.
 - [ ] **Leitura de Notas Fiscais e Comprovantes:** OCR local offline para preenchimento de lançamentos.
 - [ ] **Planejador de Dívidas:** Métodos Bola de Neve (*Snowball*) e Avalanche.
 - [x] **Modo Calma:** Visão semanal minimalista sem sobrecarga de números, com ritmo qualitativo da semana, contador de dias de paz financeira e modo zen (ocultar cifras).

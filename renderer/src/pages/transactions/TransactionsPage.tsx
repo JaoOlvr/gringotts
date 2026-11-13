@@ -4,7 +4,8 @@ import { api } from '../../lib/ipc';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { Button } from '../../components/ui/button';
 import { TransactionsTable } from './components/TransactionsTable';
-import { Plus, ReceiptText, Landmark } from 'lucide-react';
+import { Plus, ReceiptText, Landmark, ArrowDownToLine } from 'lucide-react';
+import { useOpenFinanceStore } from '../../store/useOpenFinanceStore';
 import type { Account } from '../../types';
 
 export const TransactionsPage: React.FC = () => {
@@ -135,6 +136,15 @@ export const TransactionsPage: React.FC = () => {
               </optgroup>
             </select>
           </div>
+
+          <Button 
+            variant="outline"
+            onClick={() => useOpenFinanceStore.getState().openModal(filterAccountId !== 'all' && filterAccountId !== 'included' ? filterAccountId : undefined)}
+            className="gap-2 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-primary-400"
+          >
+            <ArrowDownToLine className="w-4 h-4 text-primary-500" />
+            Importar Extrato
+          </Button>
 
           <Button onClick={() => setQuickAddOpen(true)} className="gap-2">
             <Plus className="w-4 h-4" />

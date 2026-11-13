@@ -73,3 +73,60 @@ export interface Goal {
   color?: string;
   createdAt: Date;
 }
+
+export type StatementType = 'OFX' | 'OPEN_FINANCE_JSON' | 'CSV';
+
+export interface ParsedStatementTransaction {
+  id: string;
+  fitid?: string;
+  date: string; // "YYYY-MM-DD"
+  rawDate: string;
+  amountCents: number;
+  absAmountCents: number;
+  type: 'INCOME' | 'EXPENSE';
+  description: string;
+  memo?: string;
+  payeeName?: string;
+  suggestedCategoryId?: string;
+  suggestedCategoryName?: string;
+  isDuplicate?: boolean;
+  duplicateReason?: string;
+  selected?: boolean;
+}
+
+export interface ParsedStatement {
+  bankId?: string;
+  bankName?: string;
+  accountNumber?: string;
+  accountType?: 'checking' | 'savings' | 'credit_card';
+  currency: string;
+  startDate?: string;
+  endDate?: string;
+  ledgerBalanceCents?: number;
+  balanceDate?: string;
+  transactions: ParsedStatementTransaction[];
+  totalIncomeCents: number;
+  totalExpenseCents: number;
+  statementType: StatementType;
+}
+
+export interface ImportTransactionsParams {
+  accountId: string;
+  transactions: Array<{
+    amountCents: number;
+    date: string;
+    description: string;
+    type: 'INCOME' | 'EXPENSE';
+    categoryId?: string;
+    fitid?: string;
+    status?: 'PAID' | 'PENDING' | 'RECONCILED';
+  }>;
+  updateAccountBalance?: boolean;
+}
+
+export interface ImportTransactionsResult {
+  importedCount: number;
+  skippedCount: number;
+  newAccountBalanceCents?: number;
+}
+

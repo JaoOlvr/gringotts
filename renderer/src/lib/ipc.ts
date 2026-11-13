@@ -1,6 +1,24 @@
-import type { Account, Category, Transaction, Budget, Goal } from '../types';
+import type {
+  Account,
+  Category,
+  Transaction,
+  Budget,
+  Goal,
+  ParsedStatement,
+  ImportTransactionsParams,
+  ImportTransactionsResult,
+} from '../types';
 
-export type { Account, Category, Transaction, Budget, Goal };
+export type {
+  Account,
+  Category,
+  Transaction,
+  Budget,
+  Goal,
+  ParsedStatement,
+  ImportTransactionsParams,
+  ImportTransactionsResult,
+};
 
 export interface UpdateCheckResult {
   hasUpdate: boolean;
@@ -333,6 +351,21 @@ export const api = {
       const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
       const shouldUseDark = mode === 'dark' || (mode === 'system' && prefersDark);
       return { themeSource: mode, shouldUseDarkColors: shouldUseDark };
+    },
+  },
+
+  openFinance: {
+    selectFile: async (): Promise<{ canceled: boolean; filePath?: string; fileContent?: string; fileName?: string }> => {
+      if (isElectron) return window.api!.invoke('openFinance:selectFile');
+      return { canceled: true };
+    },
+    parseStatement: async (fileContent: string, fileName?: string, accountId?: string): Promise<ParsedStatement> => {
+      if (isElectron) return window.api!.invoke('openFinance:parseStatement', { fileContent, fileName, accountId });
+      throw new Error('Open Finance indisponível no modo navegador');
+    },
+    importTransactions: async (params: ImportTransactionsParams): Promise<ImportTransactionsResult> => {
+      if (isElectron) return window.api!.invoke('openFinance:importTransactions', params);
+      throw new Error('Open Finance indisponível no modo navegador');
     },
   },
 

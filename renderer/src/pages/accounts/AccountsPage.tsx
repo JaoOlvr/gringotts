@@ -7,7 +7,8 @@ import { Button } from '../../components/ui/button';
 import { AccountFormModal } from './components/AccountFormModal';
 import { AccountSecurityModal } from '../../components/security/AccountSecurityModal';
 import { DeleteAccountModal } from '../../components/security/DeleteAccountModal';
-import { Landmark, Plus, Trash2, KeyRound, Lock, ShieldCheck, Pencil, Layers, EyeOff, Loader2 } from 'lucide-react';
+import { Landmark, Plus, Trash2, KeyRound, Lock, ShieldCheck, Pencil, Layers, EyeOff, Loader2, ArrowDownToLine } from 'lucide-react';
+import { useOpenFinanceStore } from '../../store/useOpenFinanceStore';
 import type { Account } from '../../types';
 
 export const AccountsPage: React.FC = () => {
@@ -93,10 +94,21 @@ export const AccountsPage: React.FC = () => {
             Gerencie suas contas, saldos e senhas de proteção
           </p>
         </div>
-        <Button onClick={() => { setEditingId(null); setModalOpen(true); }} className="gap-2">
-          <Plus className="w-4 h-4" />
-          Nova Conta
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="outline"
+            onClick={() => useOpenFinanceStore.getState().openModal()}
+            className="gap-2 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-primary-400"
+          >
+            <ArrowDownToLine className="w-4 h-4 text-primary-500" />
+            Importar Extrato (OFX)
+          </Button>
+
+          <Button onClick={() => { setEditingId(null); setModalOpen(true); }} className="gap-2">
+            <Plus className="w-4 h-4" />
+            Nova Conta
+          </Button>
+        </div>
       </div>
 
       {/* Resumo Consolidado das Carteiras */}
@@ -268,15 +280,27 @@ export const AccountsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-750">
-                  <div className="text-xs text-gray-400 dark:text-gray-500">Saldo Atual</div>
-                  <div className={`text-2xl font-bold mt-0.5 ${
-                    account.balanceCents >= 0 
-                      ? 'text-emerald-600 dark:text-emerald-400' 
-                      : 'text-rose-600 dark:text-rose-400'
-                  }`}>
-                    {formatCurrency(account.balanceCents, account.currency)}
+                <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-750 flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-gray-400 dark:text-gray-500">Saldo Atual</div>
+                    <div className={`text-2xl font-bold mt-0.5 ${
+                      account.balanceCents >= 0 
+                        ? 'text-emerald-600 dark:text-emerald-400' 
+                        : 'text-rose-600 dark:text-rose-400'
+                    }`}>
+                      {formatCurrency(account.balanceCents, account.currency)}
+                    </div>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => useOpenFinanceStore.getState().openModal(account.id)}
+                    className="p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/40 border border-gray-100 dark:border-gray-700 transition flex items-center gap-1.5 text-xs font-semibold"
+                    title="Importar extrato para esta conta"
+                  >
+                    <ArrowDownToLine className="w-4 h-4 text-primary-500" />
+                    <span>Importar OFX</span>
+                  </button>
                 </div>
               </div>
             );

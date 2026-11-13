@@ -16,7 +16,8 @@ import {
   Leaf,
   ArrowUpCircle,
   RefreshCw,
-  Loader2
+  Loader2,
+  ArrowDownToLine
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTransactionStore } from '../../store/useTransactionStore';
@@ -24,6 +25,7 @@ import { useAccountStore } from '../../store/useAccountStore';
 import { useDonationStore } from '../../store/useDonationStore';
 import { useCalculatorStore } from '../../store/useCalculatorStore';
 import { useUpdaterStore } from '../../store/useUpdaterStore';
+import { useOpenFinanceStore } from '../../store/useOpenFinanceStore';
 import { GringottsLogo } from '../common/GringottsLogo';
 import { ThemeSelector } from '../common/ThemeSelector';
 
@@ -118,6 +120,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             <kbd className="ml-auto hidden sm:inline-block text-[10px] bg-gray-100 dark:bg-gray-700/80 px-1.5 py-0.5 rounded text-gray-500 dark:text-gray-400 font-mono">
               Alt+C
             </kbd>
+          </button>
+
+          {/* Botão Importar Extrato & Open Finance */}
+          <button
+            onClick={() => useOpenFinanceStore.getState().openModal()}
+            className="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750 transition duration-150 text-left w-full group"
+            title="Importar Extrato Bancário OFX ou Open Finance JSON"
+          >
+            <ArrowDownToLine className="w-5 h-5 text-gray-500 group-hover:text-primary-500 transition-colors" />
+            <span className="ml-3">Importar Extrato</span>
+            <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-500/20 uppercase">
+              OFX
+            </span>
           </button>
         </nav>
       </div>

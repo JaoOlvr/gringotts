@@ -9,6 +9,7 @@ import { QuickAddTransactionModal } from '../../pages/transactions/components/Qu
 import { DonationModal } from '../donation/DonationModal';
 import { CalculatorModal } from '../calculator/CalculatorModal';
 import { UpdateModal } from '../updater/UpdateModal';
+import { OpenFinanceImportModal } from '../openfinance/OpenFinanceImportModal';
 import { useDonationStore } from '../../store/useDonationStore';
 import { useUpdaterStore } from '../../store/useUpdaterStore';
 
@@ -76,6 +77,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <DonationModal />
       <CalculatorModal />
       <UpdateModal />
+      <OpenFinanceImportModal />
     </div>
   );
 };
