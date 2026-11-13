@@ -34,10 +34,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libarchive-tools
 
-      - name: Configurar Node.js 20
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Instalar dependências (Root)
@@ -80,14 +80,15 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Configurar Android SDK & Licenças
-        uses: android-actions/setup-android@v3
-
-      - name: Configurar Node.js 20
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
+
+      - name: Aceitar Licenças do Android SDK
+        run: |
+          yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Instalar dependências (Root)
         run: npm ci || npm install
