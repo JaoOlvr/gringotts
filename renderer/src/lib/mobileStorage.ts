@@ -9,6 +9,63 @@ import type {
   SyncResultDetails,
 } from '../types';
 import { encryptPayloadWeb, decryptPayloadWeb, normalizePairingCode } from './mobileCrypto';
+import { CapacitorHttp, Capacitor } from '@capacitor/core';
+
+async function httpPostJson<T = any>(
+  url: string,
+  body: any,
+  timeoutMs = 10000
+): Promise<{ ok: boolean; status: number; data: T }> {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const res = await CapacitorHttp.post({
+        url,
+        headers: { 'Content-Type': 'application/json' },
+        data: body,
+        connectTimeout: timeoutMs,
+        readTimeout: timeoutMs,
+      });
+      return {
+        ok: res.status >= 200 && res.status < 300,
+        status: res.status,
+        data: (typeof res.data === 'string' ? JSON.parse(res.data) : res.data) as T,
+      };
+    } catch (err: any) {
+      throw new Error(
+        `Falha de conexão nativa com ${url}: ${err.message || 'Verifique se o celular e o computador estão na mesma rede Wi-Fi.'}`
+      );
+    }
+  }
+
+  // Fallback para Web / Navegador / Testes
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    const data = await res.json().catch(() => ({}));
+    return {
+      ok: res.ok,
+      status: res.status,
+      data: data as T,
+    };
+  } catch (err: any) {
+    clearTimeout(timer);
+    if (err.name === 'AbortError') {
+      throw new Error(
+        `Tempo limite esgotado (${timeoutMs / 1000}s) ao conectar a ${url}. Verifique se ambos os aparelhos estão na mesma rede Wi-Fi e se o firewall do computador não está bloqueando a porta.`
+      );
+    }
+    throw new Error(
+      `Não foi possível alcançar o computador em ${url}. Verifique se o IP está correto e se o servidor P2P está iniciado no desktop.`
+    );
+  }
+}
 
 const STORAGE_KEYS = {
   ACCOUNTS: 'gringotts_mobile_accounts_v1',
@@ -553,42 +610,45 @@ class MobileStorageService {
     const baseUrl = `http://${host}:${port}`;
 
     // 1. Handshake
-    const handshakeRes = await fetch(`${baseUrl}/api/sync/handshake`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    const handshake = await httpPostJson<{ ok: boolean; deviceName?: string; error?: string }>(
+      `${baseUrl}/api/sync/handshake`,
+      {
         pairingCode: normalizedCode,
         deviceName: 'Gringotts Mobile',
-      }),
-    });
+      }
+    );
 
-    if (!handshakeRes.ok) {
-      const errJson = (await handshakeRes.json().catch(() => ({}))) as any;
-      throw new Error(errJson.error || `Falha no pareamento com o computador (${handshakeRes.status})`);
+    if (!handshake.ok || !handshake.data?.ok) {
+      throw new Error(
+        handshake.data?.error || `Falha no pareamento com o computador (status ${handshake.status}). Código de pareamento incorreto ou recusado.`
+      );
     }
 
-    const handshakeData = (await handshakeRes.json()) as any;
+    const handshakeData = handshake.data;
 
     // 2. Exportar dataset local e criptografar com WebCrypto
     const localDataset = this.exportSyncDataset();
     const localEnvelope = await encryptPayloadWeb(localDataset, normalizedCode);
 
     // 3. Troca de dados
-    const exchangeRes = await fetch(`${baseUrl}/api/sync/exchange`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        pairingCode: normalizedCode,
-        envelope: localEnvelope,
-      }),
+    const exchange = await httpPostJson<{
+      ok: boolean;
+      envelope?: any;
+      mergeResult?: any;
+      deviceName?: string;
+      error?: string;
+    }>(`${baseUrl}/api/sync/exchange`, {
+      pairingCode: normalizedCode,
+      envelope: localEnvelope,
     });
 
-    if (!exchangeRes.ok) {
-      const errJson = (await exchangeRes.json().catch(() => ({}))) as any;
-      throw new Error(errJson.error || `Erro durante a sincronização de dados (${exchangeRes.status})`);
+    if (!exchange.ok || !exchange.data?.ok) {
+      throw new Error(
+        exchange.data?.error || `Erro durante a sincronização de dados (${exchange.status}).`
+      );
     }
 
-    const exchangeData = (await exchangeRes.json()) as any;
+    const exchangeData = exchange.data;
     if (!exchangeData.envelope) {
       throw new Error('O computador não enviou os dados criptografados para sincronização.');
     }

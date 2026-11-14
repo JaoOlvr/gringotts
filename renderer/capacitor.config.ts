@@ -5,9 +5,13 @@ const config: CapacitorConfig = {
   appName: 'Gringotts',
   webDir: 'dist',
   server: {
-    androidScheme: 'https',
+    androidScheme: 'http',
+    cleartext: true,
   },
   plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
     Camera: {
       permissionsType: 'prompt',
     },
