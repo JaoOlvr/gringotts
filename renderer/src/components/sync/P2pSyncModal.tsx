@@ -48,6 +48,8 @@ export const P2pSyncModal: React.FC = () => {
     connectAndSync,
     clearError,
     clearLastResult,
+    pendingDeepLink,
+    setPendingDeepLink,
   } = useP2pSyncStore();
 
   const queryClient = useQueryClient();
@@ -90,6 +92,17 @@ export const P2pSyncModal: React.FC = () => {
       setSelectedIp(status.primaryIp);
     }
   }, [status?.primaryIp, selectedIp]);
+
+  // Se o aplicativo foi aberto via Deep Link (gringotts-sync://)
+  useEffect(() => {
+    if (pendingDeepLink) {
+      setTargetHost(pendingDeepLink.host);
+      setTargetPort(String(pendingDeepLink.port));
+      setTargetCode(pendingDeepLink.pairingCode);
+      setActiveTab('connect');
+      setPendingDeepLink(null);
+    }
+  }, [pendingDeepLink, setPendingDeepLink]);
 
   // Se o usuário colar um link ou JSON rápido, desmembra os campos
   const handleQuickPasteChange = useCallback((val: string) => {

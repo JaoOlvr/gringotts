@@ -8,6 +8,7 @@ interface P2pSyncState {
   isConnecting: boolean;
   lastResult: SyncResultDetails | null;
   error: string | null;
+  pendingDeepLink: { host: string; port: number; pairingCode: string } | null;
 
   openModal: () => void;
   closeModal: () => void;
@@ -17,6 +18,7 @@ interface P2pSyncState {
   connectAndSync: (params: { host: string; port: number; pairingCode: string }) => Promise<SyncResultDetails>;
   clearError: () => void;
   clearLastResult: () => void;
+  setPendingDeepLink: (link: { host: string; port: number; pairingCode: string } | null) => void;
 }
 
 export const useP2pSyncStore = create<P2pSyncState>((set, get) => ({
@@ -26,6 +28,7 @@ export const useP2pSyncStore = create<P2pSyncState>((set, get) => ({
   isConnecting: false,
   lastResult: null,
   error: null,
+  pendingDeepLink: null,
 
   openModal: () => {
     set({ isOpen: true, error: null });
@@ -79,4 +82,5 @@ export const useP2pSyncStore = create<P2pSyncState>((set, get) => ({
 
   clearError: () => set({ error: null }),
   clearLastResult: () => set({ lastResult: null }),
+  setPendingDeepLink: (link) => set({ pendingDeepLink: link }),
 }));

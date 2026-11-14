@@ -15,6 +15,19 @@ import { api } from './lib/ipc';
 import { useGlobalKeyboardShortcuts } from './lib/keyboard';
 import { GringottsLogo } from './components/common/GringottsLogo';
 import { useThemeStore } from './store/useThemeStore';
+import { App as CapacitorApp } from '@capacitor/app';
+import { useP2pSyncStore } from './store/useP2pSyncStore';
+
+function parseSyncUrl(rawUrl: string) {
+  const match = rawUrl.match(/^gringotts-sync:\/\/([^:]+):(\d+)\?code=(.+)$/i);
+  if (match) {
+    const host = match[1] || '';
+    const port = parseInt(match[2] || '57492', 10);
+    const pairingCode = match[3] || '';
+    useP2pSyncStore.getState().setPendingDeepLink({ host, port, pairingCode });
+    useP2pSyncStore.getState().openModal();
+  }
+}
 
 function App() {
   useGlobalKeyboardShortcuts();
@@ -24,6 +37,20 @@ function App() {
   useEffect(() => {
     // Inicializa listeners do tema do sistema operacional
     const cleanupTheme = useThemeStore.getState().initTheme();
+
+    // Listener para Deep Links (gringotts-sync://...)
+    let listenerHandle: any = null;
+    CapacitorApp.addListener('appUrlOpen', (event) => {
+      parseSyncUrl(event.url);
+    }).then((h) => {
+      listenerHandle = h;
+    }).catch(() => {});
+
+    CapacitorApp.getLaunchUrl().then((launch) => {
+      if (launch?.url) {
+        parseSyncUrl(launch.url);
+      }
+    }).catch(() => {});
 
     api.accounts.getAll()
       .then((accs) => {
@@ -38,6 +65,9 @@ function App() {
 
     return () => {
       cleanupTheme();
+      if (listenerHandle) {
+        listenerHandle.remove();
+      }
     };
   }, [setAccounts]);
 
