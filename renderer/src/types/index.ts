@@ -181,6 +181,7 @@ export interface P2pSyncStatus {
   lastSyncTimestamp: number | null;
   connectedClientsCount: number;
   errorMessage: string | null;
+  firewallNotice?: string | null;
 }
 
 export interface SyncResultDetails {

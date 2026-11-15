@@ -523,6 +523,33 @@ export const P2pSyncModal: React.FC = () => {
                     </Button>
                   </div>
 
+                  {/* Aviso de Firewall UFW (Linux) */}
+                  {status?.firewallNotice && (
+                    <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
+                      <div className="flex-1 space-y-1">
+                        <p className="font-semibold text-amber-900 dark:text-amber-200">
+                          Firewall do Linux (UFW) Detectado
+                        </p>
+                        <p className="text-[11px] text-amber-700 dark:text-amber-400">
+                          Se o celular der erro de tempo limite ao conectar, libere a porta no terminal com:
+                        </p>
+                        <div className="flex items-center gap-2 pt-0.5">
+                          <code className="bg-amber-100 dark:bg-amber-900/60 px-2 py-0.5 rounded font-mono text-[11px] text-amber-900 dark:text-amber-200 select-all">
+                            sudo ufw allow 57492:57500/tcp
+                          </code>
+                          <button
+                            type="button"
+                            onClick={() => handleCopy('sudo ufw allow 57492:57500/tcp', 'code')}
+                            className="text-[10px] text-amber-800 dark:text-amber-300 underline font-semibold hover:text-amber-900 cursor-pointer"
+                          >
+                            Copiar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* QR Code e Informações de Conexão */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-gray-50 dark:bg-gray-800/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
                     

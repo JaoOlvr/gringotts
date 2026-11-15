@@ -20,6 +20,7 @@ export interface P2pSyncStatus {
   lastSyncTimestamp: number | null;
   connectedClientsCount: number;
   errorMessage: string | null;
+  firewallNotice?: string | null;
 }
 
 export interface SyncResultDetails {
@@ -87,7 +88,23 @@ export class P2pSyncService {
       lastSyncTimestamp: this.lastSyncTimestamp,
       connectedClientsCount: this.connectedClientsCount,
       errorMessage: this.errorMessage,
+      firewallNotice: this.checkFirewallNotice(),
     };
+  }
+
+  private checkFirewallNotice(): string | null {
+    if (process.platform === 'linux') {
+      try {
+        const { execSync } = require('node:child_process');
+        const res = execSync('systemctl is-active ufw', { encoding: 'utf-8', timeout: 500 }).trim();
+        if (res === 'active') {
+          return 'Firewall UFW ativo no Linux. Se o celular der erro de tempo limite, libere a porta no terminal com: sudo ufw allow 57492:57500/tcp';
+        }
+      } catch {
+        // ufw inativo ou erro
+      }
+    }
+    return null;
   }
 
   /**

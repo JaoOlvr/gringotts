@@ -31,8 +31,14 @@ async function httpPostJson<T = any>(
         data: (typeof res.data === 'string' ? JSON.parse(res.data) : res.data) as T,
       };
     } catch (err: any) {
+      const msg = err.message || '';
+      if (/failed to connect|timed? ?out|timeout/i.test(msg)) {
+        throw new Error(
+          `Tempo limite esgotado ao conectar ao computador. O firewall do Linux (UFW) no computador está bloqueando conexões externas. No terminal do seu computador, execute: sudo ufw allow 57492:57500/tcp`
+        );
+      }
       throw new Error(
-        `Falha de conexão nativa com ${url}: ${err.message || 'Verifique se o celular e o computador estão na mesma rede Wi-Fi.'}`
+        `Falha de conexão nativa com ${url}: ${msg || 'Verifique se o celular e o computador estão na mesma rede Wi-Fi.'}`
       );
     }
   }
